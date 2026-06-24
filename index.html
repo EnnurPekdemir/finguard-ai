@@ -3,28 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SentinelBank - FinGuard Risk Portal</title>
-    <!-- Google Fonts: Plus Jakarta Sans for premium SaaS feel -->
+    <title>SentinelBank - FinGuard Risk Management Platform</title>
+    <!-- Google Fonts: Plus Jakarta Sans for premium SaaS & Outfit for logos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- ApexCharts for modern corporate financial data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
         :root {
-            --bg-color: #05070c;
-            --card-bg: rgba(13, 17, 28, 0.7);
+            --bg-color: #0b0f19; /* Deep Slate Background */
+            --panel-bg: #111827; /* Dark Slate Cards */
+            --panel-header: #1f2937;
             --border-color: rgba(255, 255, 255, 0.06);
-            --primary: #4f46e5;
-            --primary-glow: rgba(79, 70, 229, 0.25);
-            --success: #10b981;
-            --success-glow: rgba(16, 185, 129, 0.2);
-            --danger: #f43f5e;
-            --danger-glow: rgba(244, 63, 94, 0.2);
-            --warning: #fbbf24;
-            --warning-glow: rgba(251, 191, 36, 0.2);
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-glow: rgba(37, 99, 235, 0.2);
+            --success: #22c55e;
+            --success-glow: rgba(34, 197, 94, 0.15);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.15);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.15);
             --text-main: #f3f4f6;
-            --text-muted: #828b9a;
-            --input-bg: rgba(7, 9, 15, 0.9);
-            --input-focus: rgba(79, 70, 229, 0.4);
+            --text-muted: #9ca3af;
+            --sidebar-width: 260px;
+            --input-bg: #030712;
         }
 
         * {
@@ -39,36 +43,32 @@
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
+            overflow: hidden;
+        }
+
+        /* ------------------ LEFT SIDEBAR ------------------ */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #070a12;
+            border-right: 1px solid var(--border-color);
+            display: flex;
             flex-direction: column;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            flex-shrink: 0;
+            z-index: 10;
         }
 
-        /* SaaS Header Navbar */
-        header {
-            width: 100%;
-            padding: 1.25rem 2.5rem;
+        .sidebar-brand {
+            padding: 2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             border-bottom: 1px solid var(--border-color);
-            background: rgba(5, 7, 12, 0.8);
-            backdrop-filter: blur(12px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .logo-icon {
+        .brand-icon {
             width: 2.2rem;
             height: 2.2rem;
-            background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -76,120 +76,313 @@
             color: white;
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 1.2rem;
-            box-shadow: 0 0 15px var(--primary-glow);
+            font-size: 1.15rem;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
         }
 
-        .logo-text {
+        .brand-name {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             letter-spacing: -0.5px;
-            background: linear-gradient(to right, #ffffff, #c7d2fe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: white;
         }
 
-        .logo-subtext {
+        .sidebar-menu {
+            list-style: none;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
             color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-left: 0.6rem;
-            padding-left: 0.6rem;
-            border-left: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
             font-weight: 500;
+            transition: all 0.2s ease;
         }
 
-        .system-status {
+        .menu-item:hover, .menu-item.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item.active {
+            background-color: var(--primary);
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .menu-item svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* ------------------ MAIN WRAPPER ------------------ */
+        .wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ------------------ TOP NAV HEADER ------------------ */
+        header {
+            height: 70px;
+            background-color: #070a12;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 9;
+        }
+
+        .header-search {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            width: 300px;
+        }
+
+        .header-search input {
+            background: none;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+            width: 100%;
+        }
+
+        .header-search svg {
+            stroke: var(--text-muted);
+            width: 16px;
+            height: 16px;
+        }
+
+        .header-meta {
             display: flex;
             align-items: center;
             gap: 1.5rem;
-            font-size: 0.85rem;
         }
 
-        .status-indicator {
+        .live-clock {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .header-notifications {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger);
+            border-radius: 50%;
+        }
+
+        .header-profile {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
-            color: var(--success);
-            font-weight: 600;
-            background: rgba(16, 185, 129, 0.06);
-            border: 1px solid rgba(16, 185, 129, 0.15);
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
+            gap: 0.75rem;
+            cursor: pointer;
         }
 
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            background-color: var(--success);
+        .profile-avatar {
+            width: 2.2rem;
+            height: 2.2rem;
             border-radius: 50%;
-            display: inline-block;
-            animation: pulse 1.8s infinite;
+            background-color: #3b82f6;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 2px solid var(--border-color);
         }
 
-        /* Layout Container */
-        main {
+        .profile-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* ------------------ CONTENT VIEW AREA ------------------ */
+        .content-container {
             flex: 1;
-            max-width: 1400px;
-            width: 100%;
-            margin: 2.5rem auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: 1.3fr 1fr;
-            gap: 2.5rem;
+            padding: 2rem;
+            overflow-y: auto;
+            position: relative;
         }
 
-        @media (max-width: 1100px) {
-            main {
+        .tab-view {
+            display: none;
+            animation: fadeIn 0.35s ease forwards;
+        }
+
+        .tab-view.active {
+            display: block;
+        }
+
+        /* ------------------ DASHBOARD MODULES ------------------ */
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .stat-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .stat-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .stat-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Dashboard Charts Grid */
+        .chart-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 1000px) {
+            .chart-layout {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Glassmorphism Cards */
-        .glass-card {
-            background: var(--card-bg);
+        .chart-card {
+            background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.3s ease;
         }
 
-        .glass-card:hover {
-            border-color: rgba(255, 255, 255, 0.12);
-        }
-
-        .card-header {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color);
+        .chart-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
 
-        .card-title {
-            font-size: 1.05rem;
+        .chart-title {
+            font-size: 1rem;
             font-weight: 700;
             color: white;
+        }
+
+        /* Live Risk Log */
+        .live-log-container {
+            background: #070a12;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            height: 220px;
+            overflow-y: auto;
+            color: #34d399;
             display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            letter-spacing: -0.2px;
+            flex-direction: column;
+            gap: 0.4rem;
         }
 
-        .card-body {
-            padding: 2rem;
-            flex: 1;
+        /* ------------------ RISK EVALUATION TAB ------------------ */
+        .eval-layout {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 2rem;
         }
 
-        /* Form Subtitles */
+        @media (max-width: 1100px) {
+            .eval-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Forms in Cards */
         .form-section-title {
             font-size: 0.75rem;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--primary);
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 1.25rem;
@@ -205,191 +398,133 @@
             background: var(--border-color);
         }
 
-        /* Form Grid */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            gap: 1.25rem;
             margin-bottom: 2rem;
-        }
-
-        @media (max-width: 640px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         label {
             font-size: 0.8rem;
             font-weight: 600;
-            color: #9ea7b6;
+            color: var(--text-muted);
         }
 
         input, select {
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.8rem 1rem;
-            color: var(--text-main);
+            border-radius: 6px;
+            padding: 0.75rem 0.85rem;
+            color: white;
             font-size: 0.9rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
             width: 100%;
+            transition: all 0.2s ease;
         }
 
         input:focus, select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--input-focus);
-            background: rgba(13, 17, 28, 0.9);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
         }
 
-        /* Style select dropdown arrow */
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg fill='rgb(130, 139, 154)' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 35px;
-        }
-
-        /* Submit Button */
         .btn-submit {
-            background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 1.1rem;
+            border-radius: 6px;
+            padding: 1rem;
             font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem;
-            box-shadow: 0 4px 15px var(--primary-glow);
+            gap: 0.5rem;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
         }
 
         .btn-submit:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
         }
 
-        /* Result Area */
-        .result-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            height: 100%;
-            min-height: 400px;
-            color: var(--text-muted);
-            padding: 2rem;
-            gap: 1.25rem;
-        }
-
-        .result-placeholder svg {
-            width: 4rem;
-            height: 4rem;
-            stroke: rgba(255, 255, 255, 0.05);
-        }
-
-        .result-card {
-            display: none;
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* Underwriting Header Verdict */
+        /* Verdict Output Panel */
         .verdict-header {
-            border-radius: 12px;
-            padding: 1.75rem;
+            border-radius: 8px;
+            padding: 1.5rem;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
         }
 
         .verdict-badge {
             font-family: 'Outfit', sans-serif;
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 800;
             letter-spacing: 0.5px;
             display: block;
-            margin-bottom: 0.35rem;
+            margin-bottom: 0.25rem;
         }
 
         .verdict-sub {
             font-size: 0.85rem;
             font-weight: 500;
-            opacity: 0.85;
-            line-height: 1.4;
+            opacity: 0.9;
         }
 
-        /* Verdict Color Profiles */
+        /* Color profiles for verdicts */
         .verdict-onay {
-            background-color: rgba(16, 185, 129, 0.03);
-            border-color: rgba(16, 185, 129, 0.2) !important;
+            background-color: rgba(34, 197, 94, 0.05);
+            border-color: rgba(34, 197, 94, 0.2) !important;
             color: var(--success);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.05);
         }
 
         .verdict-red {
-            background-color: rgba(244, 63, 94, 0.03);
-            border-color: rgba(244, 63, 94, 0.2) !important;
+            background-color: rgba(239, 68, 68, 0.05);
+            border-color: rgba(239, 68, 68, 0.2) !important;
             color: var(--danger);
-            box-shadow: 0 0 30px rgba(244, 63, 94, 0.05);
         }
 
         .verdict-review {
-            background-color: rgba(251, 191, 36, 0.03);
-            border-color: rgba(251, 191, 36, 0.2) !important;
+            background-color: rgba(245, 158, 11, 0.05);
+            border-color: rgba(245, 158, 11, 0.2) !important;
             color: var(--warning);
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.05);
         }
 
-        /* Metric Widgets */
-        .metric-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-
-        .metric-card {
-            background: rgba(255, 255, 255, 0.02);
+        /* Risk Gauge Card */
+        .gauge-card {
+            background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
-        .metric-meta {
+        .gauge-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 0.5rem;
         }
 
-        .metric-title {
+        .gauge-title {
             font-size: 0.75rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .metric-value {
-            font-size: 1.3rem;
+        .gauge-value {
+            font-size: 1.25rem;
             font-weight: 700;
             color: white;
             font-family: 'Outfit', sans-serif;
@@ -397,8 +532,8 @@
 
         .bar-outer {
             width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.04);
+            height: 8px;
+            background: #1f2937;
             border-radius: 4px;
             overflow: hidden;
         }
@@ -407,36 +542,33 @@
             height: 100%;
             border-radius: 4px;
             width: 0%;
-            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: width 0.8s ease;
         }
 
-        .bar-inner.success { background: linear-gradient(to right, var(--primary), var(--success)); }
-        .bar-inner.danger { background: linear-gradient(to right, var(--primary), var(--danger)); }
-        .bar-inner.warning { background: linear-gradient(to right, var(--primary), var(--warning)); }
+        .bar-inner.success { background-color: var(--success); }
+        .bar-inner.danger { background-color: var(--danger); }
+        .bar-inner.warning { background-color: var(--warning); }
+        .bar-inner.primary { background-color: var(--primary); }
 
         /* Checklist */
-        .checklist-container {
-            margin-bottom: 2rem;
-        }
-
         .checklist-title {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: white;
+            margin-bottom: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.85rem;
         }
 
         .checklist {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.85rem;
-            background: rgba(255, 255, 255, 0.01);
+            gap: 0.75rem;
+            background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .checklist-item {
@@ -444,8 +576,8 @@
             align-items: center;
             justify-content: space-between;
             font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            padding-bottom: 0.65rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 0.5rem;
         }
 
         .checklist-item:last-child {
@@ -455,61 +587,232 @@
 
         .checklist-label {
             color: var(--text-muted);
-            font-weight: 500;
         }
 
         .checklist-status {
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.35rem;
         }
 
-        /* Printable / Action Buttons */
-        .report-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn-secondary {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 0.85rem;
-            font-size: 0.85rem;
-            font-weight: 600;
+        /* AI Explanation Panel */
+        .explain-panel {
+            background: rgba(37, 99, 235, 0.02);
+            border: 1px dashed rgba(37, 99, 235, 0.2);
             border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .explain-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #60a5fa;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .explain-text {
+            font-size: 0.85rem;
+            line-height: 1.45;
+            color: #cbd5e1;
+        }
+
+        /* ------------------ CUSTOMERS LIST TAB ------------------ */
+        .customer-layout {
+            display: grid;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 2rem;
+        }
+
+        .table-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background-color: var(--panel-header);
+            padding: 1rem 1.25rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            color: #cbd5e1;
+        }
+
+        tr {
             cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-success { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* ------------------ AI CHATBOT ASSISTANT ------------------ */
+        .chatbot-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+        }
+
+        .chatbot-btn {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+            transition: transform 0.2s ease;
+        }
+
+        .chatbot-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .chatbot-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .chatbot-window {
+            width: 360px;
+            height: 480px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            display: none;
+            animation: fadeIn 0.2s ease forwards;
+        }
+
+        .chatbot-header {
+            background-color: var(--panel-header);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chatbot-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .chatbot-body {
+            flex: 1;
+            padding: 1.25rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-msg {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .chat-msg.bot {
+            background-color: rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+            align-self: flex-start;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-msg.user {
+            background-color: var(--primary);
+            color: white;
+            align-self: flex-end;
+        }
+
+        .chatbot-suggested {
+            display: flex;
+            flex-wrap: wrap;
             gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background-color: #0d1117;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .suggested-btn {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            color: #cbd5e1;
+            padding: 0.35rem 0.65rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.15);
+        .suggested-btn:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+            color: white;
         }
 
-        /* Micro-Animations & Utilities */
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.6; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.6; }
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(15px); }
+        /* ------------------ ANIMATIONS & UTILITIES ------------------ */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .spinner {
             display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.25);
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 0.6s linear infinite;
@@ -518,299 +821,631 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 2rem;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
-            background: rgba(5, 7, 12, 0.9);
-            margin-top: auto;
-        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo-container">
-            <div class="logo-icon">SB</div>
-            <div class="logo-text">SentinelBank</div>
-            <div class="logo-subtext">FinGuard Risk Portal</div>
+    <!-- ------------------ LEFT SIDEBAR ------------------ -->
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">SB</div>
+            <div class="brand-name">SentinelBank</div>
         </div>
-        <div class="system-status">
-            <span>Risk Engine: <code>127.0.0.1:8000</code></span>
-            <div class="status-indicator">
-                <span class="status-dot"></span>
-                <span>ENGINE ACTIVE</span>
-            </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" onclick="switchTab('dashboard', this)">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Dashboard</span>
+            </li>
+            <li class="menu-item" onclick="switchTab('customers', this)">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>Müşteriler</span>
+            </li>
+            <li class="menu-item" onclick="switchTab('applications', this)">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>Kredi Başvuruları</span>
+            </li>
+            <li class="menu-item" onclick="switchTab('risk-analysis', this)">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span>Risk Analizi</span>
+            </li>
+            <li class="menu-item" onclick="switchTab('ai-predictions', this)">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                <span>Yapay Zeka Tahminleri</span>
+            </li>
+            <li class="menu-item" onclick="switchTab('reports', this)">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Raporlar</span>
+            </li>
+            <li class="menu-item" onclick="switchTab('settings', this)">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span>Ayarlar</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            SentinelBank &copy; 2026<br>Platform Ver 1.0.0
         </div>
-    </header>
+    </nav>
 
-    <main>
-        <!-- Form Section -->
-        <div class="glass-card">
-            <div class="card-header">
-                <div class="card-title">
-                    <svg fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg" style="stroke: var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    Kredi Risk Değerlendirme Formu
+    <!-- ------------------ MAIN WRAPPER ------------------ -->
+    <div class="wrapper">
+        
+        <!-- Top Header -->
+        <header>
+            <div class="header-search">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <input type="text" placeholder="Müşteri veya başvuru ara...">
+            </div>
+            <div class="header-meta">
+                <div class="live-clock" id="liveClock">25 Haziran 2026 | 00:00</div>
+                <div class="header-notifications">
+                    <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <span class="notification-badge"></span>
+                </div>
+                <div class="header-profile">
+                    <div class="profile-avatar">RA</div>
+                    <div class="profile-name">Risk Analisti</div>
                 </div>
             </div>
-            <div class="card-body">
-                <form id="applicationForm" onsubmit="submitForm(event)">
-                    
-                    <div class="form-section-title">Müşteri Profil Bilgileri</div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="person_age">Müşteri Yaşı</label>
-                            <input type="number" id="person_age" required min="18" max="100" placeholder="Örn: 28">
-                        </div>
+        </header>
 
-                        <div class="form-group">
-                            <label for="person_income">Yıllık Gelir ($)</label>
-                            <input type="number" id="person_income" required min="100" placeholder="Örn: 45000" oninput="calculateLiveDTI()">
-                        </div>
+        <!-- Dynamic Content Container -->
+        <div class="content-container">
 
-                        <div class="form-group">
-                            <label for="person_home_ownership">Ev Sahipliği Durumu</label>
-                            <select id="person_home_ownership" required>
-                                <option value="MORTGAGE">Kredili Mülk (MORTGAGE)</option>
-                                <option value="RENT">Kira (RENT)</option>
-                                <option value="OWN">Mülk Sahibi (OWN)</option>
-                                <option value="OTHER">Diğer (OTHER)</option>
-                            </select>
+            <!-- ------------------ TAB 1: DASHBOARD ------------------ -->
+            <div class="tab-view active" id="dashboard">
+                <!-- Top Statistics cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-title">Toplam Müşteri</span>
+                            <span class="stat-value">32,574</span>
                         </div>
-
-                        <div class="form-group">
-                            <label for="person_emp_length">Çalışma Süresi (Yıl)</label>
-                            <input type="number" step="0.5" id="person_emp_length" required min="0" placeholder="Örn: 3.5">
+                        <div class="stat-icon" style="background: rgba(37,99,235,0.1); color: var(--primary);">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                         </div>
                     </div>
-
-                    <div class="form-section-title">Kredi ve Sicil Parametreleri</div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="loan_intent">Kredi Kullanım Amacı</label>
-                            <select id="loan_intent" required>
-                                <option value="PERSONAL">Bireysel Harcamalar (PERSONAL)</option>
-                                <option value="EDUCATION">Eğitim Kredisi (EDUCATION)</option>
-                                <option value="MEDICAL">Tıbbi / Sağlık (MEDICAL)</option>
-                                <option value="VENTURE">Girişim / İş Kurma (VENTURE)</option>
-                                <option value="HOMEIMPROVEMENT">Ev Geliştirme (HOMEIMPROVEMENT)</option>
-                                <option value="DEBTCONSOLIDATION">Borç Birleştirme (DEBTCONSOLIDATION)</option>
-                            </select>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-title">Aktif Başvurular</span>
+                            <span class="stat-value">1,421</span>
                         </div>
-
-                        <div class="form-group">
-                            <label for="loan_grade">Kredi Derecesi (Internal Scorecard)</label>
-                            <select id="loan_grade" required>
-                                <option value="A">Grade A (Yüksek Güvenilir)</option>
-                                <option value="B">Grade B (Standart Üzeri)</option>
-                                <option value="C" selected>Grade C (Standart / Orta)</option>
-                                <option value="D">Grade D (İzleme Sınırı)</option>
-                                <option value="E">Grade E (Risk Altında)</option>
-                                <option value="F">Grade F (Yüksek Risk)</option>
-                                <option value="G">Grade G (Temerrüt Riski)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="loan_amnt">Talep Edilen Tutar ($)</label>
-                            <input type="number" id="loan_amnt" required min="100" placeholder="Örn: 10000" oninput="calculateLiveDTI()">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="loan_int_rate">Kredi Faiz Oranı (%)</label>
-                            <input type="number" step="0.01" id="loan_int_rate" required min="0.1" placeholder="Örn: 11.5">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="cb_person_default_on_file">Temerrüt / İhlal Kaydı</label>
-                            <select id="cb_person_default_on_file" required>
-                                <option value="N">Sicili Temiz / İhlal Yok</option>
-                                <option value="Y">Geçmiş İhlal Kaydı Var</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="cb_person_cred_hist_length">Kredi Sicil Yaşı (Yıl)</label>
-                            <input type="number" id="cb_person_cred_hist_length" required min="0" placeholder="Örn: 4">
+                        <div class="stat-icon" style="background: rgba(245,158,11,0.1); color: var(--warning);">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                         </div>
                     </div>
-
-                    <button type="submit" class="btn-submit">
-                        <span id="btnText">Risk Analizini Başlat</span>
-                        <div class="spinner" id="btnSpinner"></div>
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Result Section -->
-        <div class="glass-card">
-            <div class="card-header">
-                <div class="card-title">
-                    <svg fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg" style="stroke: var(--primary);"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="16" y2="12"/><line x1="12" x2="12.01" y1="8" y2="8"/></svg>
-                    Risk Değerlendirme Raporu
-                </div>
-            </div>
-            <div class="card-body" style="background: rgba(0, 0, 0, 0.15);">
-                
-                <!-- Placeholder state -->
-                <div class="result-placeholder" id="placeholderState">
-                    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <div>
-                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">Karar Raporu Bekleniyor</h3>
-                        <p style="font-size: 0.8rem; line-height: 1.45;">Başvuru verilerini girdikten sonra analiz sürecini tetikleyebilirsiniz.</p>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-title">Onaylanan Krediler</span>
+                            <span class="stat-value">25,466</span>
+                        </div>
+                        <div class="stat-icon" style="background: rgba(34,197,94,0.1); color: var(--success);">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-title">Yüksek Riskli</span>
+                            <span class="stat-value">7,108</span>
+                        </div>
+                        <div class="stat-icon" style="background: rgba(239,68,68,0.1); color: var(--danger);">
+                            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Dynamic Result card -->
-                <div class="result-card" id="resultCard">
-                    
-                    <div class="verdict-header" id="verdictHeader">
-                        <span class="verdict-badge" id="verdictText">ONAYLA</span>
-                        <span class="verdict-sub" id="verdictSubText">Başvuru otomatik karar kriterlerini sağlamaktadır.</span>
-                    </div>
-
-                    <div class="metric-grid">
-                        
-                        <!-- Approval Score Card -->
-                        <div class="metric-card">
-                            <div class="metric-meta">
-                                <span class="metric-title">Kredi Onay İhtimali</span>
-                                <span class="metric-value" id="onayVal">0%</span>
-                            </div>
-                            <div class="bar-outer">
-                                <div class="bar-inner success" id="onayBar"></div>
-                            </div>
+                <!-- Charts layout -->
+                <div class="chart-layout">
+                    <!-- Left main trend chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Kredi Onay Performansı & Risk Trendleri</span>
                         </div>
+                        <div id="trendChart"></div>
+                    </div>
 
-                        <!-- Rejection Score Card -->
-                        <div class="metric-card">
-                            <div class="metric-meta">
-                                <span class="metric-title">Kredi Risk/Ret İhtimali</span>
-                                <span class="metric-value" id="redVal">0%</span>
-                            </div>
-                            <div class="bar-outer">
-                                <div class="bar-inner danger" id="redBar"></div>
-                            </div>
+                    <!-- Right risk donut chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Portföy Risk Dağılımı</span>
                         </div>
-
-                        <!-- Shannon Entropy Uncertainty score -->
-                        <div class="metric-card">
-                            <div class="metric-meta">
-                                <span class="metric-title">Karar Belirsizlik Endeksi (Entropy)</span>
-                                <span class="metric-value" id="entropyVal">0.0000</span>
-                            </div>
-                            <div class="bar-outer">
-                                <div class="bar-inner warning" id="entropyBar"></div>
-                            </div>
-                        </div>
-
+                        <div id="riskDonutChart" style="margin: auto 0;"></div>
                     </div>
-
-                    <!-- Underwriting Checklist -->
-                    <div class="checklist-container">
-                        <div class="checklist-title">Ön Değerlendirme Metrikleri</div>
-                        <ul class="checklist">
-                            <li class="checklist-item">
-                                <span class="checklist-label">Borç / Gelir Oranı (Debt-to-Income)</span>
-                                <span class="checklist-status" id="dtiStatus">Hesaplanıyor...</span>
-                            </li>
-                            <li class="checklist-item">
-                                <span class="checklist-label">Müşteri Skor Sınıfı</span>
-                                <span class="checklist-status" id="gradeStatus">Normal</span>
-                            </li>
-                            <li class="checklist-item">
-                                <span class="checklist-label">Temerrüt / İhlal Geçmişi</span>
-                                <span class="checklist-status" id="defaultStatus">Yok</span>
-                            </li>
-                            <li class="checklist-item">
-                                <span class="checklist-label">Karar Akış Güven Skoru</span>
-                                <span class="checklist-status" id="entropyStatus">Yüksek Güvenilirlik</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="report-actions">
-                        <button class="btn-secondary" onclick="window.print()">
-                            <svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect height="9" width="12" x="6" y="14"/></svg>
-                            Raporu Yazdır
-                        </button>
-                    </div>
-
                 </div>
 
+                <div class="chart-layout">
+                    <!-- Score Distribution bar chart -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Müşteri Kredi Dereceleri Dağılımı (Internal Rating)</span>
+                        </div>
+                        <div id="ratingChart"></div>
+                    </div>
+
+                    <!-- Live feed log -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Gerçek Zamanlı Risk Akış Günlüğü</span>
+                        </div>
+                        <div class="live-log-container" id="liveLog">
+                            <div>[SYSTEM]: SentinelBank FinGuard engine initialized.</div>
+                            <div>[SYSTEM]: Connection with ML pipeline verified.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ------------------ TAB 2: CUSTOMERS ------------------ -->
+            <div class="tab-view" id="customers">
+                <div class="customer-layout">
+                    <div class="table-card">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Müşteri Ad Soyad</th>
+                                    <th>Yaş</th>
+                                    <th>Yıllık Gelir</th>
+                                    <th>Kredi Notu</th>
+                                    <th>Temerrüt</th>
+                                    <th>Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr onclick="showCustomerDetails('Mehmet Yılmaz', 35, 75000, 'A', 'Yok', 'DÜŞÜK RİSK')">
+                                    <td>Mehmet Yılmaz</td>
+                                    <td>35</td>
+                                    <td>$75,000</td>
+                                    <td>Grade A</td>
+                                    <td>Yok</td>
+                                    <td><span class="badge badge-success">DÜŞÜK RİSK</span></td>
+                                </tr>
+                                <tr onclick="showCustomerDetails('Ayşe Kaya', 28, 48000, 'C', 'Yok', 'ORTA RİSK')">
+                                    <td>Ayşe Kaya</td>
+                                    <td>28</td>
+                                    <td>$48,000</td>
+                                    <td>Grade C</td>
+                                    <td>Yok</td>
+                                    <td><span class="badge badge-warning">ORTA RİSK</span></td>
+                                </tr>
+                                <tr onclick="showCustomerDetails('Can Demir', 22, 12000, 'G', 'Mevcut', 'YÜKSEK RİSK')">
+                                    <td>Can Demir</td>
+                                    <td>22</td>
+                                    <td>$12,000</td>
+                                    <td>Grade G</td>
+                                    <td>Mevcut</td>
+                                    <td><span class="badge badge-danger">YÜKSEK RİSK</span></td>
+                                </tr>
+                                <tr onclick="showCustomerDetails('Zeynep Çelik', 42, 120000, 'B', 'Yok', 'DÜŞÜK RİSK')">
+                                    <td>Zeynep Çelik</td>
+                                    <td>42</td>
+                                    <td>$120,000</td>
+                                    <td>Grade B</td>
+                                    <td>Yok</td>
+                                    <td><span class="badge badge-success">DÜŞÜK RİSK</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Customer Detail Panel -->
+                    <div class="chart-card" id="customerDetailPanel">
+                        <div class="chart-header">
+                            <span class="chart-title">Müşteri Detay Kartı</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                            <div style="text-align: center; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-color);">
+                                <h3 style="font-size: 1.3rem; color: white;" id="custName">Mehmet Yılmaz</h3>
+                                <span class="badge badge-success" id="custRiskBadge" style="margin-top: 0.5rem; display: inline-block;">DÜŞÜK RİSK</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.85rem;">
+                                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Yaş:</span><strong id="custAge">35</strong></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Aylık Net Gelir:</span><strong id="custIncome">$6,250</strong></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Kredi Notu Sınıfı:</span><strong id="custGrade">Grade A</strong></div>
+                                <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Sicil İhlal Geçmişi:</span><strong id="custDefault" style="color: var(--success);">Yok</strong></div>
+                            </div>
+                            <div class="explain-panel">
+                                <div class="explain-title">Yapay Zeka Risk Açıklaması</div>
+                                <p class="explain-text" id="custExplanation">Müşterinin kredi sicili çok temizdir ve borç ödeme kapasitesi son derece yüksektir. Otomatik kredi onay kriterlerini tam kapsamlı olarak karşılar.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ------------------ TAB 3: APPLICATIONS ------------------ -->
+            <div class="tab-view" id="applications">
+                <div class="eval-layout">
+                    <!-- Form side -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Yapay Zeka Risk Tahsis Formu (Risk Evaluation)</span>
+                        </div>
+                        <div style="padding-top: 1rem;">
+                            <form id="evalForm" onsubmit="submitEvalForm(event)">
+                                <div class="form-section-title">Müşteri Profil Değişkenleri</div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="eval_age">Müşteri Yaşı (Age)</label>
+                                        <input type="number" id="eval_age" required min="18" max="100" placeholder="Örn: 28">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eval_income">Yıllık Gelir ($)</label>
+                                        <input type="number" id="eval_income" required min="100" placeholder="Örn: 45000" oninput="calculateLiveDTI_eval()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eval_home">Ev Sahipliği Durumu</label>
+                                        <select id="eval_home" required>
+                                            <option value="MORTGAGE">Kredili Mülk (MORTGAGE)</option>
+                                            <option value="RENT">Kira (RENT)</option>
+                                            <option value="OWN">Mülk Sahibi (OWN)</option>
+                                            <option value="OTHER">Diğer (OTHER)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eval_emp">Çalışma Süresi (Yıl)</label>
+                                        <input type="number" step="0.5" id="eval_emp" required min="0" placeholder="Örn: 3.5">
+                                    </div>
+                                </div>
+
+                                <div class="form-section-title">Kredi Risk Bileşenleri</div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="eval_intent">Kredi Kullanım Amacı</label>
+                                        <select id="eval_intent" required>
+                                            <option value="PERSONAL">Bireysel / İhtiyaç (PERSONAL)</option>
+                                            <option value="EDUCATION">Eğitim Kredisi (EDUCATION)</option>
+                                            <option value="MEDICAL">Sağlık / Tedavi (MEDICAL)</option>
+                                            <option value="VENTURE">Girişim / İş Geliştirme (VENTURE)</option>
+                                            <option value="HOMEIMPROVEMENT">Konut Tadilat (HOMEIMPROVEMENT)</option>
+                                            <option value="DEBTCONSOLIDATION">Borç Kapatma (DEBTCONSOLIDATION)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eval_grade">Kredi Derecesi (Internal Rating)</label>
+                                        <select id="eval_grade" required>
+                                            <option value="A">Grade A (Prime / Güvenli)</option>
+                                            <option value="B">Grade B (İyi)</option>
+                                            <option value="C" selected>Grade C (Standart)</option>
+                                            <option value="D">Grade D (İzleme)</option>
+                                            <option value="E">Grade E (Riskli)</option>
+                                            <option value="F">Grade F (Yüksek Risk)</option>
+                                            <option value="G">Grade G (Temerrüt Riski)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eval_amnt">Talep Edilen Kredi ($)</label>
+                                        <input type="number" id="eval_amnt" required min="100" placeholder="Örn: 10000" oninput="calculateLiveDTI_eval()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eval_int">Kredi Faiz Oranı (%)</label>
+                                        <input type="number" step="0.01" id="eval_int" required min="0.1" placeholder="Örn: 11.5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eval_default">Geçmiş Sicil / Borç İhlali</label>
+                                        <select id="eval_default" required>
+                                            <option value="N">Sicili Temiz / İhlal Yok</option>
+                                            <option value="Y">İhlal Kaydı Var</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="eval_hist">Kredi Sicil Uzunluğu (Yıl)</label>
+                                        <input type="number" id="eval_hist" required min="0" placeholder="Örn: 4">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn-submit">
+                                    <span id="btnText_eval">Yapay Zeka Risk Tahminini Çalıştır</span>
+                                    <div class="spinner" id="btnSpinner_eval"></div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Underwriter report side -->
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <span class="chart-title">Yapay Zeka Risk Değerlendirme Raporu</span>
+                        </div>
+                        <div style="background-color: #070a12; padding: 1.5rem; border-radius: 8px; flex: 1; border: 1px solid var(--border-color);">
+                            <!-- Placeholder -->
+                            <div class="result-placeholder" id="placeholderState_eval">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 01 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"></path></svg>
+                                <div>
+                                    <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">Değerlendirme Raporu Bekleniyor</h3>
+                                    <p style="font-size: 0.8rem; line-height: 1.45;">Başvuru verilerini girdikten sonra analiz sürecini tetikleyebilirsiniz.</p>
+                                </div>
+                            </div>
+
+                            <!-- Report card output -->
+                            <div class="result-card" id="resultCard_eval">
+                                <div class="verdict-header" id="verdictHeader_eval">
+                                    <span class="verdict-badge" id="verdictText_eval">ONAYLA</span>
+                                    <span class="verdict-sub" id="verdictSubText_eval">Kredi güven kriterlerini sağlamaktadır ve otomatik onaylanmıştır.</span>
+                                </div>
+
+                                <div class="metric-grid">
+                                    <div class="gauge-card">
+                                        <div class="gauge-meta">
+                                            <span class="gauge-title">Onay İhtimali</span>
+                                            <span class="gauge-value" id="onayVal_eval">0%</span>
+                                        </div>
+                                        <div class="bar-outer">
+                                            <div class="bar-inner success" id="onayBar_eval"></div>
+                                        </div>
+                                    </div>
+                                    <div class="gauge-card">
+                                        <div class="gauge-meta">
+                                            <span class="gauge-title">Risk / Ret İhtimali</span>
+                                            <span class="gauge-value" id="redVal_eval">0%</span>
+                                        </div>
+                                        <div class="bar-outer">
+                                            <div class="bar-inner danger" id="redBar_eval"></div>
+                                        </div>
+                                    </div>
+                                    <div class="gauge-card">
+                                        <div class="gauge-meta">
+                                            <span class="gauge-title">Belirsizlik Endeksi (Shannon Entropy)</span>
+                                            <span class="gauge-value" id="entropyVal_eval">0.0000</span>
+                                        </div>
+                                        <div class="bar-outer">
+                                            <div class="bar-inner warning" id="entropyBar_eval"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="explain-panel">
+                                    <div class="explain-title">Yapay Zeka Risk Açıklaması</div>
+                                    <p class="explain-text" id="aiExplanationText">Müşterinin kredi sicili çok temizdir ve borç ödeme kapasitesi son derece yüksektir.</p>
+                                </div>
+
+                                <div class="checklist-container">
+                                    <div class="checklist-title">Ön Değerlendirme Analiz Parametreleri</div>
+                                    <ul class="checklist">
+                                        <li class="checklist-item">
+                                            <span class="checklist-label">Borç / Gelir Oranı (Debt-to-Income)</span>
+                                            <span class="checklist-status" id="dtiStatus_eval">Hesaplanıyor...</span>
+                                        </li>
+                                        <li class="checklist-item">
+                                            <span class="checklist-label">Skor Sınıfı Değerlendirmesi</span>
+                                            <span class="checklist-status" id="gradeStatus_eval">Normal</span>
+                                        </li>
+                                        <li class="checklist-item">
+                                            <span class="checklist-label">Temerrüt / İhlal Analizi</span>
+                                            <span class="checklist-status" id="defaultStatus_eval">Yok</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ------------------ TAB 4: RISK ANALYSIS ------------------ -->
+            <div class="tab-view" id="risk-analysis">
+                <div class="chart-card" style="margin-bottom: 2rem;">
+                    <div class="chart-header"><span class="chart-title">Risk Isı Haritası & Portföy Dağılımı</span></div>
+                    <div id="riskHeatmapChart"></div>
+                </div>
+            </div>
+
+            <!-- ------------------ TAB 5: AI PREDICTIONS ------------------ -->
+            <div class="tab-view" id="ai-predictions">
+                <div class="chart-card" style="margin-bottom: 2rem;">
+                    <div class="chart-header"><span class="chart-title">Yapay Zeka Özellik Ağırlıkları (Feature Importance)</span></div>
+                    <div id="featureImportanceChart"></div>
+                </div>
+            </div>
+
+            <!-- ------------------ TAB 6: REPORTS ------------------ -->
+            <div class="tab-view" id="reports">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <span class="chart-title">Kredi Tahsis ve Değerlendirme Raporları</span>
+                        <button class="btn-secondary" onclick="window.print()" style="max-width: 150px; padding: 0.5rem 1rem;">PDF İhrac Et</button>
+                    </div>
+                    <table style="margin-top: 1rem;">
+                        <thead>
+                            <tr>
+                                <th>Rapor Kodu</th>
+                                <th>Müşteri</th>
+                                <th>Tarih</th>
+                                <th>Risk Skoru</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#REP-2026-001</td>
+                                <td>Mehmet Yılmaz</td>
+                                <td>25.06.2026</td>
+                                <td>12 / 100</td>
+                                <td><span class="badge badge-success">ONAYLANDI</span></td>
+                            </tr>
+                            <tr>
+                                <td>#REP-2026-002</td>
+                                <td>Ayşe Kaya</td>
+                                <td>24.06.2026</td>
+                                <td>46 / 100</td>
+                                <td><span class="badge badge-warning">MANUEL İNCELEME</span></td>
+                            </tr>
+                            <tr>
+                                <td>#REP-2026-003</td>
+                                <td>Can Demir</td>
+                                <td>24.06.2026</td>
+                                <td>97 / 100</td>
+                                <td><span class="badge badge-danger">REDDEDİLDİ</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ------------------ TAB 7: SETTINGS ------------------ -->
+            <div class="tab-view" id="settings">
+                <div class="chart-card">
+                    <div class="chart-header"><span class="chart-title">Sistem ve Risk Motoru Ayarları</span></div>
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1.5rem;">
+                        <div class="form-group" style="max-width: 400px;">
+                            <label for="entropy_threshold_setting">Shannon Entropy Eşik Değeri (Threshold)</label>
+                            <input type="number" id="entropy_threshold_setting" step="0.05" value="0.80" style="background-color: var(--input-bg);">
+                        </div>
+                        <div class="form-group" style="max-width: 400px;">
+                            <label for="model_version_setting">Aktif Risk Motoru Modeli</label>
+                            <select id="model_version_setting" style="background-color: var(--input-bg);">
+                                <option value="rf_1.0">Random Forest Classifier (v1.0.0)</option>
+                                <option value="xgb_2.0">XGBoost Risk Motoru (v2.0.1 Beta)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ------------------ AI CHATBOT WIDGET ------------------ -->
+        <div class="chatbot-widget">
+            <div class="chatbot-window" id="chatbotWindow">
+                <div class="chatbot-header">
+                    <div class="chatbot-title">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2.5"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline></svg>
+                        Sentinel AI Asistanı
+                    </div>
+                    <span style="cursor: pointer; font-size: 1.25rem; font-weight: bold; color: var(--text-muted);" onclick="toggleChatbot()">&times;</span>
+                </div>
+                <div class="chatbot-body" id="chatbotBody">
+                    <div class="chat-msg bot">
+                        Merhaba, SentinelBank Yapay Zeka Kredi Risk Asistanına hoş geldiniz. Size nasıl yardımcı olabilirim?
+                    </div>
+                </div>
+                <div class="chatbot-suggested">
+                    <button class="suggested-btn" onclick="sendBotMsg('Can Demir neden yüksek riskli?')">Can Demir Analizi</button>
+                    <button class="suggested-btn" onclick="sendBotMsg('Shannon Entropy neyi ölçer?')">Entropy Nedir?</button>
+                    <button class="suggested-btn" onclick="sendBotMsg('Risk raporu nasıl oluşturulur?')">Rapor Oluştur</button>
+                </div>
+            </div>
+            <div class="chatbot-btn" onclick="toggleChatbot()">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
             </div>
         </div>
-    </main>
 
-    <footer>
-        SentinelBank &copy; 2026 | Risk Assessment Platform - Engine Ver 1.0.0 (SaaS Edition)
-    </footer>
+        <!-- Footer -->
+        <footer>
+            SentinelBank &copy; 2026 | FinGuard Risk Assessment Suite (Commercial Banking Edition)
+        </footer>
+    </div>
 
+    <!-- ------------------ APPLICATION LOGIC & CHARTS ------------------ -->
     <script>
-        // Live calculation of Debt-to-Income ratio in UI
-        function calculateLiveDTI() {
-            const income = parseFloat(document.getElementById('person_income').value);
-            const loan = parseFloat(document.getElementById('loan_amnt').value);
+        // Live dynamic clock
+        function updateClock() {
+            const clockEl = document.getElementById('liveClock');
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            clockEl.innerText = now.toLocaleDateString('tr-TR', options);
+        }
+        setInterval(updateClock, 60000);
+        updateClock();
+
+        // Tabs switcher
+        function switchTab(tabId, el) {
+            // Remove active classes
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.tab-view').forEach(view => view.classList.remove('active'));
+            
+            // Add active class
+            el.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Customer detailed card triggers
+        function showCustomerDetails(name, age, income, grade, def, risk) {
+            document.getElementById('custName').innerText = name;
+            document.getElementById('custAge').innerText = age;
+            document.getElementById('custIncome').innerText = income.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+            document.getElementById('custGrade').innerText = 'Grade ' + grade;
+            document.getElementById('custDefault').innerText = def;
+            document.getElementById('custDefault').style.color = def === 'Yok' ? 'var(--success)' : 'var(--danger)';
+
+            const badge = document.getElementById('custRiskBadge');
+            badge.innerText = risk;
+            badge.className = 'badge';
+            const explain = document.getElementById('custExplanation');
+
+            if (risk === 'DÜŞÜK RİSK') {
+                badge.classList.add('badge-success');
+                explain.innerText = "Müşterinin kredi sicili çok temizdir ve borç ödeme kapasitesi son derece yüksektir. Otomatik kredi onay kriterlerini tam kapsamlı olarak karşılar.";
+            } else if (risk === 'ORTA RİSK') {
+                badge.classList.add('badge-warning');
+                explain.innerText = "Müşterinin gelir düzeyi standarttır, ancak kredi notu Grade C seviyesindedir. Borç/Gelir oranı sınırda olduğu için izlenmeli veya manuel tahsis ile değerlendirilmelidir.";
+            } else {
+                badge.classList.add('badge-danger');
+                explain.innerText = "Müşterinin yıllık geliri düşüktür ve geçmişte temerrüt (borç ödememe) kaydı mevcuttur. Risk skoru otomatik karar limitlerini aştığı için başvuru otomatik reddedilmiştir.";
+            }
+        }
+
+        // Live DTI calculation for prediction form
+        function calculateLiveDTI_eval() {
+            const income = parseFloat(document.getElementById('eval_income').value);
+            const loan = parseFloat(document.getElementById('eval_amnt').value);
+            const dtiStatus = document.getElementById('dtiStatus_eval');
             if (income > 0 && loan > 0) {
                 const dti = (loan / income) * 100;
+                dtiStatus.innerHTML = `${dti.toFixed(1)}% ` + (dti > 40 ? '<span style="color: var(--danger)">(Yüksek Risk)</span>' : '<span style="color: var(--success)">(Uygundur)</span>');
                 return dti;
             }
+            dtiStatus.innerHTML = 'Hesaplanıyor...';
             return 0;
         }
 
-        async function submitForm(e) {
+        // ML predict execution from UI
+        async function submitEvalForm(e) {
             e.preventDefault();
             
-            // Get UI elements
-            const btnText = document.getElementById('btnText');
-            const btnSpinner = document.getElementById('btnSpinner');
-            const placeholderState = document.getElementById('placeholderState');
-            const resultCard = document.getElementById('resultCard');
-            const verdictHeader = document.getElementById('verdictHeader');
-            const verdictText = document.getElementById('verdictText');
-            const verdictSubText = document.getElementById('verdictSubText');
-            const onayVal = document.getElementById('onayVal');
-            const onayBar = document.getElementById('onayBar');
-            const redVal = document.getElementById('redVal');
-            const redBar = document.getElementById('redBar');
-            const entropyVal = document.getElementById('entropyVal');
-            const entropyBar = document.getElementById('entropyBar');
+            const btnText = document.getElementById('btnText_eval');
+            const btnSpinner = document.getElementById('btnSpinner_eval');
+            const placeholder = document.getElementById('placeholderState_eval');
+            const resultCard = document.getElementById('resultCard_eval');
+            
+            const verdictHeader = document.getElementById('verdictHeader_eval');
+            const verdictText = document.getElementById('verdictText_eval');
+            const verdictSubText = document.getElementById('verdictSubText_eval');
+            
+            const onayVal = document.getElementById('onayVal_eval');
+            const onayBar = document.getElementById('onayBar_eval');
+            const redVal = document.getElementById('redVal_eval');
+            const redBar = document.getElementById('redBar_eval');
+            const entropyVal = document.getElementById('entropyVal_eval');
+            const entropyBar = document.getElementById('entropyBar_eval');
 
-            // Checklist DOM elements
-            const dtiStatus = document.getElementById('dtiStatus');
-            const gradeStatus = document.getElementById('gradeStatus');
-            const defaultStatus = document.getElementById('defaultStatus');
-            const entropyStatus = document.getElementById('entropyStatus');
+            const gradeStatus = document.getElementById('gradeStatus_eval');
+            const defaultStatus = document.getElementById('defaultStatus_eval');
+            const aiExplanationText = document.getElementById('aiExplanationText');
 
-            // Set loading state
+            // Loading state
             btnText.style.display = 'none';
             btnSpinner.style.display = 'block';
 
-            // Extract input values
+            // Gather inputs
             const payload = {
-                person_age: parseInt(document.getElementById('person_age').value),
-                person_income: parseInt(document.getElementById('person_income').value),
-                person_home_ownership: document.getElementById('person_home_ownership').value,
-                person_emp_length: parseFloat(document.getElementById('person_emp_length').value),
-                loan_intent: document.getElementById('loan_intent').value,
-                loan_grade: document.getElementById('loan_grade').value,
-                loan_amnt: parseInt(document.getElementById('loan_amnt').value),
-                loan_int_rate: parseFloat(document.getElementById('loan_int_rate').value),
-                cb_person_default_on_file: document.getElementById('cb_person_default_on_file').value,
-                cb_person_cred_hist_length: parseInt(document.getElementById('cb_person_cred_hist_length').value)
+                person_age: parseInt(document.getElementById('eval_age').value),
+                person_income: parseInt(document.getElementById('eval_income').value),
+                person_home_ownership: document.getElementById('eval_home').value,
+                person_emp_length: parseFloat(document.getElementById('eval_emp').value),
+                loan_intent: document.getElementById('eval_intent').value,
+                loan_grade: document.getElementById('eval_grade').value,
+                loan_amnt: parseInt(document.getElementById('eval_amnt').value),
+                loan_int_rate: parseFloat(document.getElementById('eval_int').value),
+                cb_person_default_on_file: document.getElementById('eval_default').value,
+                cb_person_cred_hist_length: parseInt(document.getElementById('eval_hist').value)
             };
+
+            // Write to log feed
+            logSystemEvent(`Kredi analiz motoru tetiklendi: Gelir=$${payload.person_income}, Tutar=$${payload.loan_amnt}, Derece=${payload.loan_grade}`);
 
             try {
                 const response = await fetch('/predict', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
@@ -821,76 +1456,232 @@
 
                 const data = await response.json();
 
-                // Switch placeholder with the result card
-                placeholderState.style.display = 'none';
+                // Switch UI elements
+                placeholder.style.display = 'none';
                 resultCard.style.display = 'block';
 
-                // Format Verdict Header
+                // Format Verdict Styling
                 verdictHeader.className = 'verdict-header';
                 if (data.decision_flow === 'MANUEL_INCELEME') {
                     verdictHeader.classList.add('verdict-review');
                     verdictText.innerText = 'MANUEL İNCELEME';
-                    verdictSubText.innerText = 'Kredi kararı yüksek belirsizlik nedeniyle askıya alındı. Risk uzmanı onayı gerekiyor.';
+                    verdictSubText.innerText = 'Kredi kararı yüksek belirsizlik nedeniyle askıya alındı. Risk analisti incelemesi gerekiyor.';
+                    aiExplanationText.innerText = `Yapay zeka modeli kredi başvurusunu değerlendirirken yüksek oranda belirsizlik tespit etmiştir. Shannon Entropy değeri (${data.entropy_score.toFixed(4)}) kritik limit olan 0.8 eşiğini aşmıştır. Müşteri orta risk grubunda yer almaktadır.`;
                 } else if (data.prediction === 1) {
                     verdictHeader.classList.add('verdict-red');
                     verdictText.innerText = 'REDDET';
-                    verdictSubText.innerText = 'Başvuru, risk tolerans limitlerini aşmaktadır ve otomatik reddedilmiştir.';
+                    verdictSubText.innerText = 'Kredi başvurusu yüksek risk grubunda tespit edilmiş ve otomatik karar kriterleriyle reddedilmiştir.';
+                    aiExplanationText.innerText = `Bu müşterinin yüksek riskli bulunma nedenleri: Geçmiş borç temerrüt ihlal kayıtları, yüksek kredi kullanım riski, gelir yetersizliği veya düşük dahili kredi derecesidir.`;
                 } else {
                     verdictHeader.classList.add('verdict-onay');
                     verdictText.innerText = 'ONAYLA';
-                    verdictSubText.innerText = 'Kredi güven kriterlerini sağlamaktadır ve otomatik onaylanmıştır.';
+                    verdictSubText.innerText = 'Kredi başvurusu güven limitleri dahilindedir ve otomatik onaylanmıştır.';
+                    aiExplanationText.innerText = `Müşteri güçlü ödeme kapasitesi (DTI oranı güvenli), temiz sicil kaydı ve yüksek dahili kredi puanı (Grade A-B) nedeniyle otomatik kredi onay kriterlerine tam uyumluluk göstermektedir.`;
                 }
 
-                // Render metrics
+                // Render values
                 onayVal.innerText = (data.probability_onay * 100).toFixed(1) + '%';
                 onayBar.style.width = (data.probability_onay * 100) + '%';
+                onayBar.className = 'bar-inner success';
 
                 redVal.innerText = (data.probability_red * 100).toFixed(1) + '%';
                 redBar.style.width = (data.probability_red * 100) + '%';
+                redBar.className = 'bar-inner danger';
 
                 entropyVal.innerText = data.entropy_score.toFixed(4);
-                // Map entropy to percentage for entropy bar (max binary entropy is 1.0)
                 entropyBar.style.width = Math.min((data.entropy_score * 100), 100) + '%';
+                entropyBar.className = data.manual_review_required ? 'bar-inner warning' : (data.prediction === 1 ? 'bar-inner danger' : 'bar-inner success');
 
                 // Checklist updates
-                const dti = calculateLiveDTI();
-                dtiStatus.innerHTML = `${dti.toFixed(1)}% ` + (dti > 40 ? '<span style="color: var(--danger)">(Yüksek Risk)</span>' : '<span style="color: var(--success)">(Uygundur)</span>');
+                calculateLiveDTI_eval();
 
-                // Grade checklist update
-                const grade = document.getElementById('loan_grade').value;
+                const grade = payload.loan_grade;
                 if (['A', 'B'].includes(grade)) {
-                    gradeStatus.innerHTML = `${grade} <span style="color: var(--success)">(Güvenli / Prime)</span>`;
+                    gradeStatus.innerHTML = `${grade} <span style="color: var(--success)">(Güvenli)</span>`;
                 } else if (['C', 'D'].includes(grade)) {
                     gradeStatus.innerHTML = `${grade} <span style="color: var(--warning)">(Orta Risk)</span>`;
                 } else {
                     gradeStatus.innerHTML = `${grade} <span style="color: var(--danger)">(Yüksek Risk)</span>`;
                 }
 
-                // Default history checklist update
-                const defaultHistory = document.getElementById('cb_person_default_on_file').value;
-                if (defaultHistory === 'Y') {
+                const def = payload.cb_person_default_on_file;
+                if (def === 'Y') {
                     defaultStatus.innerHTML = '<span style="color: var(--danger)">İhlal Kaydı Var</span>';
                 } else {
                     defaultStatus.innerHTML = '<span style="color: var(--success)">Yok</span>';
                 }
 
-                // Entropy status update
-                if (data.manual_review_required) {
-                    entropyStatus.innerHTML = '<span style="color: var(--warning)">Düşük Güven (Kararsız)</span>';
-                    entropyBar.className = 'bar-inner warning';
-                } else {
-                    entropyStatus.innerHTML = '<span style="color: var(--success)">Yüksek Güven</span>';
-                    // Match primary bar color based on decision
-                    entropyBar.className = data.prediction === 1 ? 'bar-inner danger' : 'bar-inner success';
-                }
+                logSystemEvent(`Risk analizi tamamlandı. Tahmin=${data.prediction_label}, Belirsizlik=${data.entropy_score.toFixed(4)}`);
 
             } catch (error) {
-                alert('Tahmin alınırken bir hata oluştu:\n' + error.message);
+                alert('Tahmin hesaplama hatası:\n' + error.message);
+                logSystemEvent(`Tahmin hatası: ${error.message}`);
             } finally {
-                btnText.style.display = 'block';
-                btnSpinner.style.display = 'none';
+                btnText_eval.style.display = 'block';
+                btnSpinner_eval.style.display = 'none';
             }
         }
+
+        // System Log Event Appender
+        function logSystemEvent(msg) {
+            const logEl = document.getElementById('liveLog');
+            const now = new Date();
+            const timeStr = now.toTimeString().split(' ')[0];
+            const div = document.createElement('div');
+            div.innerText = `[${timeStr}]: ${msg}`;
+            logEl.appendChild(div);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        // Chatbot Widget Toggle
+        function toggleChatbot() {
+            const windowEl = document.getElementById('chatbotWindow');
+            windowEl.style.display = windowEl.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        // Send message simulate bot typing
+        function sendBotMsg(msg) {
+            const body = document.getElementById('chatbotBody');
+            
+            // Add user message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'chat-msg user';
+            userDiv.innerText = msg;
+            body.appendChild(userDiv);
+            body.scrollTop = body.scrollHeight;
+
+            // Simple simulated responses
+            let response = "Anlayamadım, lütfen tekrar sorabilir misiniz?";
+            if (msg.includes("Can Demir")) {
+                response = "Müşteri Can Demir, aylık 1,000$ gelirine karşılık 9,000$ borç talep etmiştir. Borç/Gelir oranı %90'dır. Ayrıca geçmiş temerrüt ihlali kaydı ve Grade G derecesi olması nedeniyle model tarafından %97 olasılıkla YÜKSEK RİSKLİ sınıflandırılmıştır.";
+            } else if (msg.includes("Entropy")) {
+                response = "Shannon Entropy, risk modelinin tahmin olasılıkları arasındaki belirsizlik miktarını ölçer. Olasılıklar 50/50'ye yaklaştığında entropy 1.0 (maksimum) olur. Eşik değerimiz olan 0.8'i aşan durumlar kararsız kabul edilir.";
+            } else if (msg.includes("rapor")) {
+                response = "Risk raporu oluşturuldu. Raporlar sekmesinden değerlendirmeleri kontrol edebilir, sağ üstteki 'PDF İhrac Et' butonu ile indirebilirsiniz.";
+            }
+
+            // Simulate bot writing
+            setTimeout(() => {
+                const botDiv = document.createElement('div');
+                botDiv.className = 'chat-msg bot';
+                botDiv.innerText = response;
+                body.appendChild(botDiv);
+                body.scrollTop = body.scrollHeight;
+            }, 750);
+        }
+
+        // ------------------ CHARTS INITIALIZATION ------------------
+        document.addEventListener("DOMContentLoaded", function() {
+            // Trend Area Chart
+            var trendOptions = {
+                series: [{
+                    name: 'Onay Oranı (%)',
+                    data: [82, 85, 84, 88, 86, 89]
+                }, {
+                    name: 'Yüksek Risk Oranı (%)',
+                    data: [18, 15, 16, 12, 14, 11]
+                }],
+                chart: {
+                    type: 'area',
+                    height: 250,
+                    toolbar: { show: false },
+                    background: 'transparent'
+                },
+                colors: ['#22c55e', '#ef4444'],
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 2 },
+                xaxis: {
+                    categories: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
+                    labels: { style: { colors: '#9ca3af' } }
+                },
+                yaxis: {
+                    labels: { style: { colors: '#9ca3af' } }
+                },
+                grid: { borderColor: 'rgba(255,255,255,0.05)' },
+                theme: { mode: 'dark' }
+            };
+            var trendChart = new ApexCharts(document.querySelector("#trendChart"), trendOptions);
+            trendChart.render();
+
+            // Portfolio Risk Donut Chart
+            var donutOptions = {
+                series: [70, 20, 10],
+                labels: ['Düşük Risk', 'Orta Risk', 'Yüksek Risk'],
+                chart: {
+                    type: 'donut',
+                    height: 250,
+                    background: 'transparent'
+                },
+                colors: ['#22c55e', '#f59e0b', '#ef4444'],
+                legend: {
+                    position: 'bottom',
+                    labels: { colors: '#9ca3af' }
+                },
+                dataLabels: { enabled: false },
+                theme: { mode: 'dark' }
+            };
+            var donutChart = new ApexCharts(document.querySelector("#riskDonutChart"), donutOptions);
+            donutChart.render();
+
+            // Rating Bar Chart
+            var ratingOptions = {
+                series: [{
+                    name: 'Başvuru Sayısı',
+                    data: [1200, 2800, 4500, 3100, 1500, 600, 300]
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 220,
+                    toolbar: { show: false },
+                    background: 'transparent'
+                },
+                colors: ['#2563eb'],
+                xaxis: {
+                    categories: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+                    labels: { style: { colors: '#9ca3af' } }
+                },
+                yaxis: {
+                    labels: { style: { colors: '#9ca3af' } }
+                },
+                grid: { borderColor: 'rgba(255,255,255,0.05)' },
+                theme: { mode: 'dark' }
+            };
+            var ratingChart = new ApexCharts(document.querySelector("#ratingChart"), ratingOptions);
+            ratingChart.render();
+
+            // Risk Heatmap Chart (Tab 4)
+            var heatmapOptions = {
+                series: [
+                    { name: 'Grade A', data: [{x: 'Düşük Borç', y: 5}, {x: 'Orta Borç', y: 15}, {x: 'Yüksek Borç', y: 40}] },
+                    { name: 'Grade C', data: [{x: 'Düşük Borç', y: 15}, {x: 'Orta Borç', y: 35}, {x: 'Yüksek Borç', y: 70}] },
+                    { name: 'Grade G', data: [{x: 'Düşük Borç', y: 60}, {x: 'Orta Borç', y: 85}, {x: 'Yüksek Borç', y: 99}] }
+                ],
+                chart: { type: 'heatmap', height: 260, toolbar: {show: false}, background: 'transparent' },
+                colors: ['#ef4444'],
+                theme: { mode: 'dark' }
+            };
+            var heatmapChart = new ApexCharts(document.querySelector("#riskHeatmapChart"), heatmapOptions);
+            heatmapChart.render();
+
+            // Feature Importance Bar Chart (Tab 5)
+            var featureOptions = {
+                series: [{
+                    name: 'Ağırlık Skoru',
+                    data: [0.32, 0.24, 0.18, 0.12, 0.08, 0.06]
+                }],
+                chart: { type: 'bar', height: 260, toolbar: {show: false}, background: 'transparent' },
+                plotOptions: { bar: { horizontal: true } },
+                colors: ['#4f46e5'],
+                xaxis: {
+                    categories: ['Kredi Derecesi (Grade)', 'Borç / Gelir Oranı (DTI)', 'Faiz Oranı', 'Sicil İhlal Geçmişi', 'Çalışma Süresi', 'Yaş'],
+                    labels: { style: { colors: '#9ca3af' } }
+                },
+                yaxis: { labels: { style: { colors: '#9ca3af' } } },
+                theme: { mode: 'dark' }
+            };
+            var featureChart = new ApexCharts(document.querySelector("#featureImportanceChart"), featureOptions);
+            featureChart.render();
+        });
     </script>
 </body>
 </html>
