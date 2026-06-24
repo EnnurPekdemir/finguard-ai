@@ -4,27 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SentinelBank - FinGuard Risk Management Portal</title>
-    <!-- Google Fonts: Inter for high readability -->
+    <!-- Google Fonts: Inter for professional readability -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --panel-bg: #111827;
-            --panel-header: #1f2937;
-            --border-color: #374151;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success: #10b981;
-            --success-bg: rgba(16, 185, 129, 0.1);
-            --danger: #ef4444;
-            --danger-bg: rgba(239, 68, 68, 0.1);
-            --warning: #f59e0b;
-            --warning-bg: rgba(245, 158, 11, 0.1);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --input-bg: #030712;
+            --bg-color: #f1f5f9; /* Slate 100 */
+            --panel-bg: #ffffff; /* White */
+            --panel-header: #f8fafc; /* Slate 50 */
+            --border-color: #e2e8f0; /* Slate 200 */
+            --primary: #1e40af; /* Corporate Royal Blue (Blue 800) */
+            --primary-hover: #1e3a8a; /* Darker Navy (Blue 900) */
+            --success: #047857; /* Emerald 700 */
+            --success-bg: #ecfdf5; /* Emerald 50 */
+            --danger: #b91c1c; /* Red 700 */
+            --danger-bg: #fef2f2; /* Red 50 */
+            --warning: #b45309; /* Amber 700 */
+            --warning-bg: #fffbeb; /* Amber 50 */
+            --text-main: #0f172a; /* Slate 900 */
+            --text-muted: #475569; /* Slate 600 */
+            --input-bg: #ffffff; /* White */
+            --input-border: #cbd5e1; /* Slate 300 */
         }
 
         * {
@@ -43,12 +44,13 @@
             overflow-x: hidden;
         }
 
-        /* Corporate Navbar */
+        /* Corporate Navy Header */
         header {
             width: 100%;
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--panel-bg);
+            padding: 1.1rem 2rem;
+            border-bottom: 2px solid #1e3a8a;
+            background: #0f172a; /* Slate 900 */
+            color: white;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -72,21 +74,22 @@
             color: white;
             font-weight: 800;
             font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .logo-text {
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             letter-spacing: -0.5px;
             color: white;
         }
 
         .logo-subtext {
-            color: var(--text-muted);
+            color: #94a3b8; /* Slate 400 */
             font-size: 0.85rem;
             margin-left: 0.5rem;
             padding-left: 0.5rem;
-            border-left: 1px solid var(--border-color);
+            border-left: 1px solid #334155;
         }
 
         .system-status {
@@ -94,20 +97,21 @@
             align-items: center;
             gap: 1.5rem;
             font-size: 0.85rem;
+            color: #cbd5e1;
         }
 
         .status-indicator {
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            color: var(--success);
+            color: #34d399; /* Emerald 400 */
             font-weight: 600;
         }
 
         .status-dot {
             width: 8px;
             height: 8px;
-            background-color: var(--success);
+            background-color: #34d399;
             border-radius: 50%;
             display: inline-block;
             animation: pulse 1.8s infinite;
@@ -131,15 +135,15 @@
             }
         }
 
-        /* Professional Panels */
+        /* Professional Light Panels */
         .panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
 
         .panel-header {
@@ -152,9 +156,9 @@
         }
 
         .panel-title {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -167,23 +171,23 @@
             flex: 1;
         }
 
-        /* Form Layout */
+        /* Form Styling */
         .section-subtitle {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: var(--primary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 1rem;
+            margin-bottom: 1.1rem;
             padding-bottom: 0.25rem;
-            border-bottom: 1px solid rgba(37, 99, 235, 0.2);
+            border-bottom: 2px solid #eff6ff; /* Blue 50 */
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.25rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
         }
 
         @media (max-width: 640px) {
@@ -206,8 +210,8 @@
 
         input, select {
             background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border: 1px solid var(--input-border);
+            border-radius: 4px;
             padding: 0.75rem 0.85rem;
             color: var(--text-main);
             font-size: 0.9rem;
@@ -218,15 +222,19 @@
 
         input:focus, select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
         }
 
-        /* Styled Submit Button */
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Primary Button */
         .btn-submit {
             background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 4px;
             padding: 1rem;
             font-size: 0.95rem;
             font-weight: 700;
@@ -237,14 +245,14 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 2px 4px rgba(30, 64, 175, 0.15);
         }
 
         .btn-submit:hover {
             background-color: var(--primary-hover);
         }
 
-        /* Results & Report View */
+        /* Results Placeholder */
         .result-placeholder {
             display: flex;
             flex-direction: column;
@@ -260,7 +268,7 @@
         .result-placeholder svg {
             width: 3.5rem;
             height: 3.5rem;
-            stroke: var(--border-color);
+            stroke: #cbd5e1;
             margin-bottom: 1.25rem;
         }
 
@@ -269,9 +277,9 @@
             animation: fadeIn 0.4s ease forwards;
         }
 
-        /* Underwriting Scoreboard */
+        /* Underwriting Header */
         .report-header {
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 1.5rem;
             text-align: center;
             margin-bottom: 1.5rem;
@@ -295,23 +303,23 @@
         /* Verdict Color Profiles */
         .status-onay {
             background-color: var(--success-bg);
-            border-color: rgba(16, 185, 129, 0.3) !important;
+            border-color: #a7f3d0 !important; /* Emerald 200 */
             color: var(--success);
         }
 
         .status-red {
             background-color: var(--danger-bg);
-            border-color: rgba(239, 68, 68, 0.3) !important;
+            border-color: #fecaca !important; /* Red 200 */
             color: var(--danger);
         }
 
         .status-review {
             background-color: var(--warning-bg);
-            border-color: rgba(245, 158, 11, 0.3) !important;
+            border-color: #fde68a !important; /* Amber 200 */
             color: var(--warning);
         }
 
-        /* Metric Rows & Indicators */
+        /* Metric Scorecards */
         .metric-group {
             display: flex;
             flex-direction: column;
@@ -320,9 +328,9 @@
         }
 
         .metric-card {
-            background: var(--input-bg);
+            background: #f8fafc; /* Slate 50 */
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 1rem;
         }
 
@@ -343,13 +351,13 @@
         .metric-value {
             font-size: 1.2rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-main);
         }
 
         .bar-outer {
             width: 100%;
             height: 6px;
-            background: #1f2937;
+            background: #e2e8f0;
             border-radius: 4px;
             overflow: hidden;
         }
@@ -366,11 +374,11 @@
         .bar-inner.warning { background-color: var(--warning); }
         .bar-inner.primary { background-color: var(--primary); }
 
-        /* Underwriting Checklist */
+        /* Checklist */
         .checklist-title {
             font-size: 0.85rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-main);
             margin-bottom: 0.75rem;
             text-transform: uppercase;
         }
@@ -380,9 +388,9 @@
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            background: var(--input-bg);
+            background: #f8fafc;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 1.25rem;
             margin-bottom: 1.5rem;
         }
@@ -392,7 +400,7 @@
             align-items: center;
             justify-content: space-between;
             font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid #f1f5f9;
             padding-bottom: 0.5rem;
         }
 
@@ -421,29 +429,30 @@
         .btn-secondary {
             flex: 1;
             background-color: transparent;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--input-border);
             color: var(--text-main);
             padding: 0.75rem;
             font-size: 0.85rem;
             font-weight: 600;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.4rem;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.05);
+            background-color: var(--panel-header);
+            border-color: var(--text-muted);
         }
 
         /* Animations & Utilities */
         @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.5; }
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
 
         @keyframes fadeIn {
@@ -472,7 +481,7 @@
             font-size: 0.75rem;
             color: var(--text-muted);
             border-top: 1px solid var(--border-color);
-            background: var(--panel-bg);
+            background: #ffffff;
             margin-top: auto;
         }
     </style>
@@ -601,13 +610,13 @@
                     Risk Analiz Raporu (Underwriting Report)
                 </div>
             </div>
-            <div class="panel-body" style="background-color: #0d121f;">
+            <div class="panel-body" style="background-color: #f8fafc;">
                 
                 <!-- Placeholder state -->
                 <div class="result-placeholder" id="placeholderState">
                     <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"></path></svg>
                     <div>
-                        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">Değerlendirme Raporu Bekleniyor</h3>
+                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Değerlendirme Raporu Bekleniyor</h3>
                         <p style="font-size: 0.8rem; line-height: 1.4;">Lütfen sol taraftaki formu doldurun ve risk hesaplama motorunu tetikleyin.</p>
                     </div>
                 </div>
@@ -616,7 +625,7 @@
                 <div class="result-card" id="resultCard">
                     
                     <div class="report-header" id="verdictHeader">
-                        <span class="report-badge" id="verdictText">ONAY</span>
+                        <span class="report-badge" id="verdictText">ONAYLA</span>
                         <span class="report-sub" id="verdictSubText">Başvuru otomatik karar kriterlerini sağlamaktadır.</span>
                     </div>
 
@@ -729,7 +738,7 @@
             const dtiStatus = document.getElementById('dtiStatus');
             const gradeStatus = document.getElementById('gradeStatus');
             const defaultStatus = document.getElementById('defaultStatus');
-            const entropyStatus = document.getElementById('entropyStatus');
+            const fontropyStatus = document.getElementById('entropyStatus');
 
             // Set loading state
             btnText.style.display = 'none';
