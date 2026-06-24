@@ -3,36 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SentinelBank - FinGuard Risk Management Portal</title>
-    <!-- Google Fonts: Inter for professional readability -->
+    <title>SentinelBank - FinGuard Risk Portal</title>
+    <!-- Google Fonts: Plus Jakarta Sans for premium SaaS feel -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f1f5f9; /* Slate 100 */
-            --panel-bg: #ffffff; /* White */
-            --panel-header: #f8fafc; /* Slate 50 */
-            --border-color: #e2e8f0; /* Slate 200 */
-            --primary: #1e40af; /* Corporate Royal Blue (Blue 800) */
-            --primary-hover: #1e3a8a; /* Darker Navy (Blue 900) */
-            --success: #047857; /* Emerald 700 */
-            --success-bg: #ecfdf5; /* Emerald 50 */
-            --danger: #b91c1c; /* Red 700 */
-            --danger-bg: #fef2f2; /* Red 50 */
-            --warning: #b45309; /* Amber 700 */
-            --warning-bg: #fffbeb; /* Amber 50 */
-            --text-main: #0f172a; /* Slate 900 */
-            --text-muted: #475569; /* Slate 600 */
-            --input-bg: #ffffff; /* White */
-            --input-border: #cbd5e1; /* Slate 300 */
+            --bg-color: #05070c;
+            --card-bg: rgba(13, 17, 28, 0.7);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.25);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --danger: #f43f5e;
+            --danger-glow: rgba(244, 63, 94, 0.2);
+            --warning: #fbbf24;
+            --warning-glow: rgba(251, 191, 36, 0.2);
+            --text-main: #f3f4f6;
+            --text-muted: #828b9a;
+            --input-bg: rgba(7, 9, 15, 0.9);
+            --input-focus: rgba(79, 70, 229, 0.4);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
@@ -42,54 +41,62 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
         }
 
-        /* Corporate Navy Header */
+        /* SaaS Header Navbar */
         header {
             width: 100%;
-            padding: 1.1rem 2rem;
-            border-bottom: 2px solid #1e3a8a;
-            background: #0f172a; /* Slate 900 */
-            color: white;
+            padding: 1.25rem 2.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(5, 7, 12, 0.8);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 100;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.8rem;
         }
 
         .logo-icon {
             width: 2.2rem;
             height: 2.2rem;
-            background-color: var(--primary);
-            border-radius: 6px;
+            background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
+            font-family: 'Outfit', sans-serif;
             font-weight: 800;
-            font-size: 1.1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px var(--primary-glow);
         }
 
         .logo-text {
+            font-family: 'Outfit', sans-serif;
             font-weight: 700;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             letter-spacing: -0.5px;
-            color: white;
+            background: linear-gradient(to right, #ffffff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .logo-subtext {
-            color: #94a3b8; /* Slate 400 */
+            color: var(--text-muted);
             font-size: 0.85rem;
-            margin-left: 0.5rem;
-            padding-left: 0.5rem;
-            border-left: 1px solid #334155;
+            margin-left: 0.6rem;
+            padding-left: 0.6rem;
+            border-left: 1px solid var(--border-color);
+            font-weight: 500;
         }
 
         .system-status {
@@ -97,36 +104,39 @@
             align-items: center;
             gap: 1.5rem;
             font-size: 0.85rem;
-            color: #cbd5e1;
         }
 
         .status-indicator {
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            color: #34d399; /* Emerald 400 */
+            color: var(--success);
             font-weight: 600;
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #34d399;
+            width: 6px;
+            height: 6px;
+            background-color: var(--success);
             border-radius: 50%;
             display: inline-block;
             animation: pulse 1.8s infinite;
         }
 
-        /* Dashboard Grid Layout */
+        /* Layout Container */
         main {
             flex: 1;
             max-width: 1400px;
             width: 100%;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
+            margin: 2.5rem auto;
+            padding: 0 2rem;
             display: grid;
             grid-template-columns: 1.3fr 1fr;
-            gap: 2rem;
+            gap: 2.5rem;
         }
 
         @media (max-width: 1100px) {
@@ -135,59 +145,72 @@
             }
         }
 
-        /* Professional Light Panels */
-        .panel {
-            background: var(--panel-bg);
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease;
         }
 
-        .panel-header {
-            background: var(--panel-header);
-            padding: 1.25rem 1.5rem;
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .panel-title {
-            font-size: 1rem;
+        .card-title {
+            font-size: 1.05rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: white;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            gap: 0.6rem;
+            letter-spacing: -0.2px;
         }
 
-        .panel-body {
-            padding: 1.5rem;
+        .card-body {
+            padding: 2rem;
             flex: 1;
         }
 
-        /* Form Styling */
-        .section-subtitle {
-            font-size: 0.8rem;
+        /* Form Subtitles */
+        .form-section-title {
+            font-size: 0.75rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 1.1rem;
-            padding-bottom: 0.25rem;
-            border-bottom: 2px solid #eff6ff; /* Blue 50 */
+            letter-spacing: 1.5px;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
+        .form-section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        /* Form Grid */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
-            margin-bottom: 1.75rem;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         @media (max-width: 640px) {
@@ -199,60 +222,67 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.5rem;
         }
 
         label {
             font-size: 0.8rem;
             font-weight: 600;
-            color: var(--text-muted);
+            color: #9ea7b6;
         }
 
         input, select {
             background: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 4px;
-            padding: 0.75rem 0.85rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
             color: var(--text-main);
             font-size: 0.9rem;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             outline: none;
             width: 100%;
         }
 
         input:focus, select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+            box-shadow: 0 0 0 3px var(--input-focus);
+            background: rgba(13, 17, 28, 0.9);
         }
 
-        input::placeholder {
-            color: #94a3b8;
+        /* Style select dropdown arrow */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='rgb(130, 139, 154)' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 35px;
         }
 
-        /* Primary Button */
+        /* Submit Button */
         .btn-submit {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 1rem;
+            border-radius: 8px;
+            padding: 1.1rem;
             font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: all 0.3s ease;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            box-shadow: 0 2px 4px rgba(30, 64, 175, 0.15);
+            gap: 0.6rem;
+            box-shadow: 0 4px 15px var(--primary-glow);
         }
 
         .btn-submit:hover {
-            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
         }
 
-        /* Results Placeholder */
+        /* Result Area */
         .result-placeholder {
             display: flex;
             flex-direction: column;
@@ -263,101 +293,112 @@
             min-height: 400px;
             color: var(--text-muted);
             padding: 2rem;
+            gap: 1.25rem;
         }
 
         .result-placeholder svg {
-            width: 3.5rem;
-            height: 3.5rem;
-            stroke: #cbd5e1;
-            margin-bottom: 1.25rem;
+            width: 4rem;
+            height: 4rem;
+            stroke: rgba(255, 255, 255, 0.05);
         }
 
         .result-card {
             display: none;
-            animation: fadeIn 0.4s ease forwards;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        /* Underwriting Header */
-        .report-header {
-            border-radius: 6px;
-            padding: 1.5rem;
+        /* Underwriting Header Verdict */
+        .verdict-header {
+            border-radius: 12px;
+            padding: 1.75rem;
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
         }
 
-        .report-badge {
-            font-size: 1.8rem;
+        .verdict-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
             font-weight: 800;
             letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
             display: block;
+            margin-bottom: 0.35rem;
         }
 
-        .report-sub {
+        .verdict-sub {
             font-size: 0.85rem;
             font-weight: 500;
-            opacity: 0.9;
+            opacity: 0.85;
+            line-height: 1.4;
         }
 
         /* Verdict Color Profiles */
-        .status-onay {
-            background-color: var(--success-bg);
-            border-color: #a7f3d0 !important; /* Emerald 200 */
+        .verdict-onay {
+            background-color: rgba(16, 185, 129, 0.03);
+            border-color: rgba(16, 185, 129, 0.2) !important;
             color: var(--success);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.05);
         }
 
-        .status-red {
-            background-color: var(--danger-bg);
-            border-color: #fecaca !important; /* Red 200 */
+        .verdict-red {
+            background-color: rgba(244, 63, 94, 0.03);
+            border-color: rgba(244, 63, 94, 0.2) !important;
             color: var(--danger);
+            box-shadow: 0 0 30px rgba(244, 63, 94, 0.05);
         }
 
-        .status-review {
-            background-color: var(--warning-bg);
-            border-color: #fde68a !important; /* Amber 200 */
+        .verdict-review {
+            background-color: rgba(251, 191, 36, 0.03);
+            border-color: rgba(251, 191, 36, 0.2) !important;
             color: var(--warning);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.05);
         }
 
-        /* Metric Scorecards */
-        .metric-group {
+        /* Metric Widgets */
+        .metric-grid {
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .metric-card {
-            background: #f8fafc; /* Slate 50 */
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1rem;
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
-        .metric-info {
+        .metric-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
         }
 
         .metric-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .metric-value {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            color: var(--text-main);
+            color: white;
+            font-family: 'Outfit', sans-serif;
         }
 
         .bar-outer {
             width: 100%;
             height: 6px;
-            background: #e2e8f0;
+            background: rgba(255, 255, 255, 0.04);
             border-radius: 4px;
             overflow: hidden;
         }
@@ -366,33 +407,36 @@
             height: 100%;
             border-radius: 4px;
             width: 0%;
-            transition: width 0.8s ease;
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .bar-inner.success { background-color: var(--success); }
-        .bar-inner.danger { background-color: var(--danger); }
-        .bar-inner.warning { background-color: var(--warning); }
-        .bar-inner.primary { background-color: var(--primary); }
+        .bar-inner.success { background: linear-gradient(to right, var(--primary), var(--success)); }
+        .bar-inner.danger { background: linear-gradient(to right, var(--primary), var(--danger)); }
+        .bar-inner.warning { background: linear-gradient(to right, var(--primary), var(--warning)); }
 
         /* Checklist */
+        .checklist-container {
+            margin-bottom: 2rem;
+        }
+
         .checklist-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 0.75rem;
+            color: white;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.85rem;
         }
 
         .checklist {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            background: #f8fafc;
+            gap: 0.85rem;
+            background: rgba(255, 255, 255, 0.01);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            padding: 1.5rem;
         }
 
         .checklist-item {
@@ -400,8 +444,8 @@
             align-items: center;
             justify-content: space-between;
             font-size: 0.85rem;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            padding-bottom: 0.65rem;
         }
 
         .checklist-item:last-child {
@@ -411,60 +455,61 @@
 
         .checklist-label {
             color: var(--text-muted);
+            font-weight: 500;
         }
 
         .checklist-status {
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.4rem;
         }
 
-        /* Printable / Report actions */
+        /* Printable / Action Buttons */
         .report-actions {
             display: flex;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .btn-secondary {
             flex: 1;
-            background-color: transparent;
-            border: 1px solid var(--input-border);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
             color: var(--text-main);
-            padding: 0.75rem;
+            padding: 0.85rem;
             font-size: 0.85rem;
             font-weight: 600;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.4rem;
+            gap: 0.5rem;
             transition: all 0.2s ease;
         }
 
         .btn-secondary:hover {
-            background-color: var(--panel-header);
-            border-color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
-        /* Animations & Utilities */
+        /* Micro-Animations & Utilities */
         @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            0% { transform: scale(0.95); opacity: 0.6; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.6; }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .spinner {
             display: none;
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.25);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 0.6s linear infinite;
@@ -477,11 +522,11 @@
         /* Footer */
         footer {
             text-align: center;
-            padding: 1.5rem;
+            padding: 2rem;
             font-size: 0.75rem;
             color: var(--text-muted);
             border-top: 1px solid var(--border-color);
-            background: #ffffff;
+            background: rgba(5, 7, 12, 0.9);
             margin-top: auto;
         }
     </style>
@@ -492,38 +537,38 @@
         <div class="logo-container">
             <div class="logo-icon">SB</div>
             <div class="logo-text">SentinelBank</div>
-            <div class="logo-subtext">FinGuard Risk Engine</div>
+            <div class="logo-subtext">FinGuard Risk Portal</div>
         </div>
         <div class="system-status">
-            <span>Server: <code>127.0.0.1:8000</code></span>
+            <span>Risk Engine: <code>127.0.0.1:8000</code></span>
             <div class="status-indicator">
                 <span class="status-dot"></span>
-                <span>RISK ENGINE ACTIVE</span>
+                <span>ENGINE ACTIVE</span>
             </div>
         </div>
     </header>
 
     <main>
         <!-- Form Section -->
-        <div class="panel">
-            <div class="panel-header">
-                <div class="panel-title">
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="card-title">
                     <svg fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg" style="stroke: var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    Kredi Başvuru Değerlendirme Formu
+                    Kredi Risk Değerlendirme Formu
                 </div>
             </div>
-            <div class="panel-body">
+            <div class="card-body">
                 <form id="applicationForm" onsubmit="submitForm(event)">
                     
-                    <div class="section-subtitle">Müşteri Profil Bilgileri</div>
+                    <div class="form-section-title">Müşteri Profil Bilgileri</div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="person_age">Müşteri Yaşı (Age)</label>
+                            <label for="person_age">Müşteri Yaşı</label>
                             <input type="number" id="person_age" required min="18" max="100" placeholder="Örn: 28">
                         </div>
 
                         <div class="form-group">
-                            <label for="person_income">Yıllık Net Gelir (Annual Income - $)</label>
+                            <label for="person_income">Yıllık Gelir ($)</label>
                             <input type="number" id="person_income" required min="100" placeholder="Örn: 45000" oninput="calculateLiveDTI()">
                         </div>
 
@@ -538,58 +583,58 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="person_emp_length">Çalışma Süresi (İş Deneyimi - Yıl)</label>
+                            <label for="person_emp_length">Çalışma Süresi (Yıl)</label>
                             <input type="number" step="0.5" id="person_emp_length" required min="0" placeholder="Örn: 3.5">
                         </div>
                     </div>
 
-                    <div class="section-subtitle">Kredi ve Sicil Bilgileri</div>
+                    <div class="form-section-title">Kredi ve Sicil Parametreleri</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="loan_intent">Kredi Kullanım Amacı</label>
                             <select id="loan_intent" required>
-                                <option value="PERSONAL">Kişisel / Bireysel (PERSONAL)</option>
-                                <option value="EDUCATION">Eğitim (EDUCATION)</option>
+                                <option value="PERSONAL">Bireysel Harcamalar (PERSONAL)</option>
+                                <option value="EDUCATION">Eğitim Kredisi (EDUCATION)</option>
                                 <option value="MEDICAL">Tıbbi / Sağlık (MEDICAL)</option>
-                                <option value="VENTURE">Girişim / Ticari (VENTURE)</option>
-                                <option value="HOMEIMPROVEMENT">Ev Tadilat (HOMEIMPROVEMENT)</option>
-                                <option value="DEBTCONSOLIDATION">Borç Kapatma (DEBTCONSOLIDATION)</option>
+                                <option value="VENTURE">Girişim / İş Kurma (VENTURE)</option>
+                                <option value="HOMEIMPROVEMENT">Ev Geliştirme (HOMEIMPROVEMENT)</option>
+                                <option value="DEBTCONSOLIDATION">Borç Birleştirme (DEBTCONSOLIDATION)</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="loan_grade">Kredi Notu Derecesi (Internal Rating)</label>
+                            <label for="loan_grade">Kredi Derecesi (Internal Scorecard)</label>
                             <select id="loan_grade" required>
-                                <option value="A">Grade A (En Güvenli / Prime)</option>
-                                <option value="B">Grade B (İyi / Subprime A)</option>
-                                <option value="C" selected>Grade C (Orta)</option>
-                                <option value="D">Grade D (Riskli)</option>
-                                <option value="E">Grade E (Çok Riskli)</option>
+                                <option value="A">Grade A (Yüksek Güvenilir)</option>
+                                <option value="B">Grade B (Standart Üzeri)</option>
+                                <option value="C" selected>Grade C (Standart / Orta)</option>
+                                <option value="D">Grade D (İzleme Sınırı)</option>
+                                <option value="E">Grade E (Risk Altında)</option>
                                 <option value="F">Grade F (Yüksek Risk)</option>
-                                <option value="G">Grade G (Temerrüt Sınırı)</option>
+                                <option value="G">Grade G (Temerrüt Riski)</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="loan_amnt">Talep Edilen Kredi Tutarı ($)</label>
+                            <label for="loan_amnt">Talep Edilen Tutar ($)</label>
                             <input type="number" id="loan_amnt" required min="100" placeholder="Örn: 10000" oninput="calculateLiveDTI()">
                         </div>
 
                         <div class="form-group">
-                            <label for="loan_int_rate">Talep Edilen Kredi Faiz Oranı (%)</label>
+                            <label for="loan_int_rate">Kredi Faiz Oranı (%)</label>
                             <input type="number" step="0.01" id="loan_int_rate" required min="0.1" placeholder="Örn: 11.5">
                         </div>
 
                         <div class="form-group">
-                            <label for="cb_person_default_on_file">Geçmiş Borç İhlali / Sicil Kaydı</label>
+                            <label for="cb_person_default_on_file">Temerrüt / İhlal Kaydı</label>
                             <select id="cb_person_default_on_file" required>
-                                <option value="N">Sicili Temiz / Yok (N)</option>
-                                <option value="Y">İhlal Kaydı Mevcut (Y)</option>
+                                <option value="N">Sicili Temiz / İhlal Yok</option>
+                                <option value="Y">Geçmiş İhlal Kaydı Var</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="cb_person_cred_hist_length">Kredi Sicil Uzunluğu (Yıl)</label>
+                            <label for="cb_person_cred_hist_length">Kredi Sicil Yaşı (Yıl)</label>
                             <input type="number" id="cb_person_cred_hist_length" required min="0" placeholder="Örn: 4">
                         </div>
                     </div>
@@ -603,37 +648,37 @@
         </div>
 
         <!-- Result Section -->
-        <div class="panel">
-            <div class="panel-header">
-                <div class="panel-title">
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="card-title">
                     <svg fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg" style="stroke: var(--primary);"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="16" y2="12"/><line x1="12" x2="12.01" y1="8" y2="8"/></svg>
-                    Risk Analiz Raporu (Underwriting Report)
+                    Risk Değerlendirme Raporu
                 </div>
             </div>
-            <div class="panel-body" style="background-color: #f8fafc;">
+            <div class="card-body" style="background: rgba(0, 0, 0, 0.15);">
                 
                 <!-- Placeholder state -->
                 <div class="result-placeholder" id="placeholderState">
-                    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"></path></svg>
+                    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     <div>
-                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Değerlendirme Raporu Bekleniyor</h3>
-                        <p style="font-size: 0.8rem; line-height: 1.4;">Lütfen sol taraftaki formu doldurun ve risk hesaplama motorunu tetikleyin.</p>
+                        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">Karar Raporu Bekleniyor</h3>
+                        <p style="font-size: 0.8rem; line-height: 1.45;">Başvuru verilerini girdikten sonra analiz sürecini tetikleyebilirsiniz.</p>
                     </div>
                 </div>
 
                 <!-- Dynamic Result card -->
                 <div class="result-card" id="resultCard">
                     
-                    <div class="report-header" id="verdictHeader">
-                        <span class="report-badge" id="verdictText">ONAYLA</span>
-                        <span class="report-sub" id="verdictSubText">Başvuru otomatik karar kriterlerini sağlamaktadır.</span>
+                    <div class="verdict-header" id="verdictHeader">
+                        <span class="verdict-badge" id="verdictText">ONAYLA</span>
+                        <span class="verdict-sub" id="verdictSubText">Başvuru otomatik karar kriterlerini sağlamaktadır.</span>
                     </div>
 
-                    <div class="metric-group">
+                    <div class="metric-grid">
                         
                         <!-- Approval Score Card -->
                         <div class="metric-card">
-                            <div class="metric-info">
+                            <div class="metric-meta">
                                 <span class="metric-title">Kredi Onay İhtimali</span>
                                 <span class="metric-value" id="onayVal">0%</span>
                             </div>
@@ -644,7 +689,7 @@
 
                         <!-- Rejection Score Card -->
                         <div class="metric-card">
-                            <div class="metric-info">
+                            <div class="metric-meta">
                                 <span class="metric-title">Kredi Risk/Ret İhtimali</span>
                                 <span class="metric-value" id="redVal">0%</span>
                             </div>
@@ -655,8 +700,8 @@
 
                         <!-- Shannon Entropy Uncertainty score -->
                         <div class="metric-card">
-                            <div class="metric-info">
-                                <span class="metric-title">Karar Belirsizliği (Shannon Entropy)</span>
+                            <div class="metric-meta">
+                                <span class="metric-title">Karar Belirsizlik Endeksi (Entropy)</span>
                                 <span class="metric-value" id="entropyVal">0.0000</span>
                             </div>
                             <div class="bar-outer">
@@ -667,25 +712,27 @@
                     </div>
 
                     <!-- Underwriting Checklist -->
-                    <div class="checklist-title">Ön Değerlendirme Analizi</div>
-                    <ul class="checklist">
-                        <li class="checklist-item">
-                            <span class="checklist-label">Borç / Gelir Oranı (Debt-to-Income)</span>
-                            <span class="checklist-status" id="dtiStatus">Hesaplanıyor...</span>
-                        </li>
-                        <li class="checklist-item">
-                            <span class="checklist-label">Kredi Notu Güven Derecesi</span>
-                            <span class="checklist-status" id="gradeStatus">Normal</span>
-                        </li>
-                        <li class="checklist-item">
-                            <span class="checklist-label">Temerrüt / İhlal Geçmişi</span>
-                            <span class="checklist-status" id="defaultStatus">Yok</span>
-                        </li>
-                        <li class="checklist-item">
-                            <span class="checklist-label">Karar Akış Güven Skoru</span>
-                            <span class="checklist-status" id="entropyStatus">Yüksek Güvenilirlik</span>
-                        </li>
-                    </ul>
+                    <div class="checklist-container">
+                        <div class="checklist-title">Ön Değerlendirme Metrikleri</div>
+                        <ul class="checklist">
+                            <li class="checklist-item">
+                                <span class="checklist-label">Borç / Gelir Oranı (Debt-to-Income)</span>
+                                <span class="checklist-status" id="dtiStatus">Hesaplanıyor...</span>
+                            </li>
+                            <li class="checklist-item">
+                                <span class="checklist-label">Müşteri Skor Sınıfı</span>
+                                <span class="checklist-status" id="gradeStatus">Normal</span>
+                            </li>
+                            <li class="checklist-item">
+                                <span class="checklist-label">Temerrüt / İhlal Geçmişi</span>
+                                <span class="checklist-status" id="defaultStatus">Yok</span>
+                            </li>
+                            <li class="checklist-item">
+                                <span class="checklist-label">Karar Akış Güven Skoru</span>
+                                <span class="checklist-status" id="entropyStatus">Yüksek Güvenilirlik</span>
+                            </li>
+                        </ul>
+                    </div>
 
                     <div class="report-actions">
                         <button class="btn-secondary" onclick="window.print()">
@@ -701,7 +748,7 @@
     </main>
 
     <footer>
-        SentinelBank &copy; 2026 | Risk Assessment Platform - Engine Ver 1.0.0 (Clean Code Compliant)
+        SentinelBank &copy; 2026 | Risk Assessment Platform - Engine Ver 1.0.0 (SaaS Edition)
     </footer>
 
     <script>
@@ -738,7 +785,7 @@
             const dtiStatus = document.getElementById('dtiStatus');
             const gradeStatus = document.getElementById('gradeStatus');
             const defaultStatus = document.getElementById('defaultStatus');
-            const fontropyStatus = document.getElementById('entropyStatus');
+            const entropyStatus = document.getElementById('entropyStatus');
 
             // Set loading state
             btnText.style.display = 'none';
@@ -779,17 +826,17 @@
                 resultCard.style.display = 'block';
 
                 // Format Verdict Header
-                verdictHeader.className = 'report-header';
+                verdictHeader.className = 'verdict-header';
                 if (data.decision_flow === 'MANUEL_INCELEME') {
-                    verdictHeader.classList.add('status-review');
+                    verdictHeader.classList.add('verdict-review');
                     verdictText.innerText = 'MANUEL İNCELEME';
                     verdictSubText.innerText = 'Kredi kararı yüksek belirsizlik nedeniyle askıya alındı. Risk uzmanı onayı gerekiyor.';
                 } else if (data.prediction === 1) {
-                    verdictHeader.classList.add('status-red');
+                    verdictHeader.classList.add('verdict-red');
                     verdictText.innerText = 'REDDET';
                     verdictSubText.innerText = 'Başvuru, risk tolerans limitlerini aşmaktadır ve otomatik reddedilmiştir.';
                 } else {
-                    verdictHeader.classList.add('status-onay');
+                    verdictHeader.classList.add('verdict-onay');
                     verdictText.innerText = 'ONAYLA';
                     verdictSubText.innerText = 'Kredi güven kriterlerini sağlamaktadır ve otomatik onaylanmıştır.';
                 }
