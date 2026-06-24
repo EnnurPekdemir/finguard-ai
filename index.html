@@ -12,23 +12,26 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
         :root {
-            --bg-color: #0b0f19; /* Deep Slate Background */
-            --panel-bg: #111827; /* Dark Slate Cards */
-            --panel-header: #1f2937;
-            --border-color: rgba(255, 255, 255, 0.06);
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --primary-glow: rgba(37, 99, 235, 0.2);
-            --success: #22c55e;
+            --bg-color: #ffffff; /* Main Background: White */
+            --page-bg: #f8fafc; /* Page Gray Area */
+            --panel-bg: #ffffff; /* Cards: White */
+            --panel-header: #f8fafc; /* Secondary Background: Light Gray */
+            --border-color: #e2e8f0; /* Borders: Light Gray */
+            --primary: #1e3a8a; /* Corporate Main: Lacivert */
+            --primary-hover: #1e40af;
+            --primary-glow: rgba(30, 58, 138, 0.15);
+            --secondary: #2563eb; /* Corporate Secondary: Mavi */
+            --success: #22c55e; /* Green */
             --success-glow: rgba(34, 197, 94, 0.15);
-            --warning: #f59e0b;
+            --warning: #f59e0b; /* Orange */
             --warning-glow: rgba(245, 158, 11, 0.15);
-            --danger: #ef4444;
+            --danger: #ef4444; /* Red */
             --danger-glow: rgba(239, 68, 68, 0.15);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --text-main: #0f172a; /* Slate 900 */
+            --text-muted: #64748b; /* Slate 500 */
             --sidebar-width: 260px;
-            --input-bg: #030712;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
         }
 
         * {
@@ -39,7 +42,7 @@
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--page-bg);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -49,7 +52,7 @@
         /* ------------------ LEFT SIDEBAR ------------------ */
         .sidebar {
             width: var(--sidebar-width);
-            background-color: #070a12;
+            background-color: var(--panel-header);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
@@ -68,7 +71,7 @@
         .brand-icon {
             width: 2.2rem;
             height: 2.2rem;
-            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -77,7 +80,7 @@
             font-family: 'Outfit', sans-serif;
             font-weight: 800;
             font-size: 1.15rem;
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 4px 10px var(--primary-glow);
         }
 
         .brand-name {
@@ -85,7 +88,7 @@
             font-weight: 700;
             font-size: 1.3rem;
             letter-spacing: -0.5px;
-            color: white;
+            color: var(--primary);
         }
 
         .sidebar-menu {
@@ -106,16 +109,17 @@
             border-radius: 8px;
             cursor: pointer;
             font-size: 0.9rem;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.2s ease;
         }
 
-        .menu-item:hover, .menu-item.active {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.05);
+        .menu-item:hover {
+            color: var(--primary);
+            background-color: rgba(30, 58, 138, 0.04);
         }
 
         .menu-item.active {
+            color: white;
             background-color: var(--primary);
             box-shadow: 0 4px 12px var(--primary-glow);
         }
@@ -125,7 +129,7 @@
             height: 18px;
             stroke: currentColor;
             fill: none;
-            stroke-width: 2;
+            stroke-width: 2.2;
         }
 
         .sidebar-footer {
@@ -144,23 +148,25 @@
             overflow: hidden;
         }
 
-        /* ------------------ TOP NAV HEADER ------------------ */
+        /* ------------------ TOP NAV HEADER (NAVY BRAND) ------------------ */
         header {
             height: 70px;
-            background-color: #070a12;
-            border-bottom: 1px solid var(--border-color);
+            background-color: var(--primary);
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 0 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .header-search {
             display: flex;
             align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             padding: 0.4rem 1rem;
             width: 300px;
@@ -176,8 +182,12 @@
             width: 100%;
         }
 
+        .header-search input::placeholder {
+            color: #cbd5e1;
+        }
+
         .header-search svg {
-            stroke: var(--text-muted);
+            stroke: #cbd5e1;
             width: 16px;
             height: 16px;
         }
@@ -190,17 +200,18 @@
 
         .live-clock {
             font-size: 0.85rem;
-            color: var(--text-muted);
+            color: #cbd5e1;
             font-weight: 500;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255, 255, 255, 0.08);
             padding: 0.35rem 0.85rem;
             border-radius: 6px;
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .header-notifications {
             position: relative;
             cursor: pointer;
+            color: #e2e8f0;
         }
 
         .notification-badge {
@@ -224,14 +235,14 @@
             width: 2.2rem;
             height: 2.2rem;
             border-radius: 50%;
-            background-color: #3b82f6;
+            background-color: var(--secondary);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 0.9rem;
-            border: 2px solid var(--border-color);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .profile-name {
@@ -246,6 +257,7 @@
             padding: 2rem;
             overflow-y: auto;
             position: relative;
+            background-color: var(--page-bg);
         }
 
         .tab-view {
@@ -280,7 +292,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
 
         .stat-info {
@@ -291,7 +303,7 @@
 
         .stat-title {
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -300,7 +312,7 @@
         .stat-value {
             font-size: 1.6rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-main);
             font-family: 'Outfit', sans-serif;
         }
 
@@ -334,6 +346,7 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
 
         .chart-header {
@@ -341,17 +354,21 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .chart-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            color: white;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* Live Risk Log */
         .live-log-container {
-            background: #070a12;
+            background: var(--panel-header);
             border-radius: 8px;
             border: 1px solid var(--border-color);
             padding: 1rem;
@@ -359,7 +376,7 @@
             font-size: 0.8rem;
             height: 220px;
             overflow-y: auto;
-            color: #34d399;
+            color: var(--success);
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
@@ -419,10 +436,10 @@
 
         input, select {
             background: var(--input-bg);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--input-border);
             border-radius: 6px;
             padding: 0.75rem 0.85rem;
-            color: white;
+            color: var(--text-main);
             font-size: 0.9rem;
             outline: none;
             width: 100%;
@@ -431,11 +448,11 @@
 
         input:focus, select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 0 2px var(--primary-glow);
         }
 
         .btn-submit {
-            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border: none;
             border-radius: 6px;
@@ -449,12 +466,12 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 10px var(--primary-glow);
         }
 
         .btn-submit:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+            background: var(--primary-hover);
         }
 
         /* Verdict Output Panel */
@@ -477,32 +494,32 @@
 
         .verdict-sub {
             font-size: 0.85rem;
-            font-weight: 500;
+            font-weight: 600;
             opacity: 0.9;
         }
 
-        /* Color profiles for verdicts */
+        /* Color profiles for verdicts (high contrast light theme) */
         .verdict-onay {
-            background-color: rgba(34, 197, 94, 0.05);
-            border-color: rgba(34, 197, 94, 0.2) !important;
-            color: var(--success);
+            background-color: #f0fdf4; /* Emerald 50 */
+            border-color: #bbf7d0 !important; /* Emerald 200 */
+            color: #16a34a; /* Emerald 600 */
         }
 
         .verdict-red {
-            background-color: rgba(239, 68, 68, 0.05);
-            border-color: rgba(239, 68, 68, 0.2) !important;
-            color: var(--danger);
+            background-color: #fef2f2; /* Red 50 */
+            border-color: #fecaca !important; /* Red 200 */
+            color: #dc2626; /* Red 600 */
         }
 
         .verdict-review {
-            background-color: rgba(245, 158, 11, 0.05);
-            border-color: rgba(245, 158, 11, 0.2) !important;
-            color: var(--warning);
+            background-color: #fffbeb; /* Amber 50 */
+            border-color: #fef3c7 !important; /* Amber 200 */
+            color: #d97706; /* Amber 600 */
         }
 
         /* Risk Gauge Card */
         .gauge-card {
-            background: var(--input-bg);
+            background: var(--panel-header);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 1.25rem;
@@ -526,14 +543,14 @@
         .gauge-value {
             font-size: 1.25rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-main);
             font-family: 'Outfit', sans-serif;
         }
 
         .bar-outer {
             width: 100%;
             height: 8px;
-            background: #1f2937;
+            background: #e2e8f0;
             border-radius: 4px;
             overflow: hidden;
         }
@@ -548,13 +565,13 @@
         .bar-inner.success { background-color: var(--success); }
         .bar-inner.danger { background-color: var(--danger); }
         .bar-inner.warning { background-color: var(--warning); }
-        .bar-inner.primary { background-color: var(--primary); }
+        .bar-inner.primary { background-color: var(--secondary); }
 
         /* Checklist */
         .checklist-title {
             font-size: 0.85rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-main);
             margin-bottom: 0.75rem;
             text-transform: uppercase;
         }
@@ -564,7 +581,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            background: var(--input-bg);
+            background: var(--panel-header);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 1.25rem;
@@ -576,7 +593,7 @@
             align-items: center;
             justify-content: space-between;
             font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 0.5rem;
         }
 
@@ -599,7 +616,7 @@
         /* AI Explanation Panel */
         .explain-panel {
             background: rgba(37, 99, 235, 0.02);
-            border: 1px dashed rgba(37, 99, 235, 0.2);
+            border: 1px dashed rgba(30, 58, 138, 0.2);
             border-radius: 8px;
             padding: 1.25rem;
             margin-bottom: 1.5rem;
@@ -608,7 +625,7 @@
         .explain-title {
             font-size: 0.8rem;
             font-weight: 700;
-            color: #60a5fa;
+            color: var(--secondary);
             text-transform: uppercase;
             margin-bottom: 0.5rem;
         }
@@ -616,7 +633,7 @@
         .explain-text {
             font-size: 0.85rem;
             line-height: 1.45;
-            color: #cbd5e1;
+            color: var(--text-muted);
         }
 
         /* ------------------ CUSTOMERS LIST TAB ------------------ */
@@ -631,6 +648,7 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
 
         table {
@@ -654,7 +672,7 @@
         td {
             padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--border-color);
-            color: #cbd5e1;
+            color: var(--text-main);
         }
 
         tr {
@@ -663,7 +681,7 @@
         }
 
         tr:hover {
-            background-color: rgba(255, 255, 255, 0.02);
+            background-color: var(--panel-header);
         }
 
         .badge {
@@ -673,9 +691,9 @@
             font-weight: 700;
         }
 
-        .badge-success { background: rgba(34, 197, 94, 0.1); color: var(--success); }
-        .badge-warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .badge-danger { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .badge-success { background: #dcfce7; color: #16a34a; }
+        .badge-warning { background: #fef3c7; color: #d97706; }
+        .badge-danger { background: #fee2e2; color: #dc2626; }
 
         /* ------------------ AI CHATBOT ASSISTANT ------------------ */
         .chatbot-widget {
@@ -693,13 +711,13 @@
             width: 3.5rem;
             height: 3.5rem;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 8px 24px var(--primary-glow);
             transition: transform 0.2s ease;
         }
 
@@ -721,7 +739,7 @@
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -741,7 +759,7 @@
         .chatbot-title {
             font-size: 0.9rem;
             font-weight: 700;
-            color: white;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 0.4rem;
@@ -754,6 +772,7 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            background-color: #ffffff;
         }
 
         .chat-msg {
@@ -765,14 +784,14 @@
         }
 
         .chat-msg.bot {
-            background-color: rgba(255, 255, 255, 0.04);
-            color: #cbd5e1;
+            background-color: var(--panel-header);
+            color: var(--text-main);
             align-self: flex-start;
             border: 1px solid var(--border-color);
         }
 
         .chat-msg.user {
-            background-color: var(--primary);
+            background-color: var(--secondary);
             color: white;
             align-self: flex-end;
         }
@@ -782,14 +801,14 @@
             flex-wrap: wrap;
             gap: 0.5rem;
             padding: 0.75rem 1.25rem;
-            background-color: #0d1117;
+            background-color: var(--panel-header);
             border-top: 1px solid var(--border-color);
         }
 
         .suggested-btn {
-            background-color: rgba(255, 255, 255, 0.02);
+            background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
-            color: #cbd5e1;
+            color: var(--text-muted);
             padding: 0.35rem 0.65rem;
             border-radius: 12px;
             font-size: 0.75rem;
@@ -798,7 +817,7 @@
         }
 
         .suggested-btn:hover {
-            background-color: rgba(255, 255, 255, 0.06);
+            background-color: var(--primary);
             color: white;
         }
 
@@ -820,6 +839,28 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 0.85rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--panel-header);
+            border-color: var(--text-muted);
         }
     </style>
 </head>
@@ -900,7 +941,7 @@
                             <span class="stat-title">Toplam Müşteri</span>
                             <span class="stat-value">32,574</span>
                         </div>
-                        <div class="stat-icon" style="background: rgba(37,99,235,0.1); color: var(--primary);">
+                        <div class="stat-icon" style="background: rgba(30,58,138,0.06); color: var(--primary);">
                             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                         </div>
                     </div>
@@ -909,7 +950,7 @@
                             <span class="stat-title">Aktif Başvurular</span>
                             <span class="stat-value">1,421</span>
                         </div>
-                        <div class="stat-icon" style="background: rgba(245,158,11,0.1); color: var(--warning);">
+                        <div class="stat-icon" style="background: rgba(245,158,11,0.06); color: var(--warning);">
                             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                         </div>
                     </div>
@@ -918,7 +959,7 @@
                             <span class="stat-title">Onaylanan Krediler</span>
                             <span class="stat-value">25,466</span>
                         </div>
-                        <div class="stat-icon" style="background: rgba(34,197,94,0.1); color: var(--success);">
+                        <div class="stat-icon" style="background: rgba(34,197,94,0.06); color: var(--success);">
                             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
                     </div>
@@ -927,7 +968,7 @@
                             <span class="stat-title">Yüksek Riskli</span>
                             <span class="stat-value">7,108</span>
                         </div>
-                        <div class="stat-icon" style="background: rgba(239,68,68,0.1); color: var(--danger);">
+                        <div class="stat-icon" style="background: rgba(239,68,68,0.06); color: var(--danger);">
                             <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         </div>
                     </div>
@@ -1033,7 +1074,7 @@
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 1.25rem;">
                             <div style="text-align: center; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border-color);">
-                                <h3 style="font-size: 1.3rem; color: white;" id="custName">Mehmet Yılmaz</h3>
+                                <h3 style="font-size: 1.3rem; color: var(--text-main);" id="custName">Mehmet Yılmaz</h3>
                                 <span class="badge badge-success" id="custRiskBadge" style="margin-top: 0.5rem; display: inline-block;">DÜŞÜK RİSK</span>
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.85rem;">
@@ -1145,12 +1186,12 @@
                         <div class="chart-header">
                             <span class="chart-title">Yapay Zeka Risk Değerlendirme Raporu</span>
                         </div>
-                        <div style="background-color: #070a12; padding: 1.5rem; border-radius: 8px; flex: 1; border: 1px solid var(--border-color);">
+                        <div style="background-color: var(--panel-header); padding: 1.5rem; border-radius: 8px; flex: 1; border: 1px solid var(--border-color);">
                             <!-- Placeholder -->
                             <div class="result-placeholder" id="placeholderState_eval">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 01 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"></path></svg>
                                 <div>
-                                    <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: white;">Değerlendirme Raporu Bekleniyor</h3>
+                                    <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-main);">Değerlendirme Raporu Bekleniyor</h3>
                                     <p style="font-size: 0.8rem; line-height: 1.45;">Başvuru verilerini girdikten sonra analiz sürecini tetikleyebilirsiniz.</p>
                                 </div>
                             </div>
@@ -1241,7 +1282,7 @@
                 <div class="chart-card">
                     <div class="chart-header">
                         <span class="chart-title">Kredi Tahsis ve Değerlendirme Raporları</span>
-                        <button class="btn-secondary" onclick="window.print()" style="max-width: 150px; padding: 0.5rem 1rem;">PDF İhrac Et</button>
+                        <button class="btn-secondary" onclick="window.print()" style="max-width: 150px; padding: 0.5rem 1rem;">PDF İndir</button>
                     </div>
                     <table style="margin-top: 1rem;">
                         <thead>
@@ -1287,11 +1328,11 @@
                     <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1.5rem;">
                         <div class="form-group" style="max-width: 400px;">
                             <label for="entropy_threshold_setting">Shannon Entropy Eşik Değeri (Threshold)</label>
-                            <input type="number" id="entropy_threshold_setting" step="0.05" value="0.80" style="background-color: var(--input-bg);">
+                            <input type="number" id="entropy_threshold_setting" step="0.05" value="0.80">
                         </div>
                         <div class="form-group" style="max-width: 400px;">
                             <label for="model_version_setting">Aktif Risk Motoru Modeli</label>
-                            <select id="model_version_setting" style="background-color: var(--input-bg);">
+                            <select id="model_version_setting">
                                 <option value="rf_1.0">Random Forest Classifier (v1.0.0)</option>
                                 <option value="xgb_2.0">XGBoost Risk Motoru (v2.0.1 Beta)</option>
                             </select>
@@ -1415,7 +1456,7 @@
             const redVal = document.getElementById('redVal_eval');
             const redBar = document.getElementById('redBar_eval');
             const entropyVal = document.getElementById('entropyVal_eval');
-            const entropyBar = document.getElementById('entropyBar_eval');
+            const fontropyBar = document.getElementById('entropyBar_eval');
 
             const gradeStatus = document.getElementById('gradeStatus_eval');
             const defaultStatus = document.getElementById('defaultStatus_eval');
@@ -1557,7 +1598,7 @@
             } else if (msg.includes("Entropy")) {
                 response = "Shannon Entropy, risk modelinin tahmin olasılıkları arasındaki belirsizlik miktarını ölçer. Olasılıklar 50/50'ye yaklaştığında entropy 1.0 (maksimum) olur. Eşik değerimiz olan 0.8'i aşan durumlar kararsız kabul edilir.";
             } else if (msg.includes("rapor")) {
-                response = "Risk raporu oluşturuldu. Raporlar sekmesinden değerlendirmeleri kontrol edebilir, sağ üstteki 'PDF İhrac Et' butonu ile indirebilirsiniz.";
+                response = "Risk raporu oluşturuldu. Raporlar sekmesinden değerlendirmeleri kontrol edebilir, sağ üstteki 'PDF İndir' butonu ile indirebilirsiniz.";
             }
 
             // Simulate bot writing
@@ -1592,13 +1633,13 @@
                 stroke: { curve: 'smooth', width: 2 },
                 xaxis: {
                     categories: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
-                    labels: { style: { colors: '#9ca3af' } }
+                    labels: { style: { colors: '#64748b' } }
                 },
                 yaxis: {
-                    labels: { style: { colors: '#9ca3af' } }
+                    labels: { style: { colors: '#64748b' } }
                 },
-                grid: { borderColor: 'rgba(255,255,255,0.05)' },
-                theme: { mode: 'dark' }
+                grid: { borderColor: '#e2e8f0' },
+                theme: { mode: 'light' }
             };
             var trendChart = new ApexCharts(document.querySelector("#trendChart"), trendOptions);
             trendChart.render();
@@ -1615,10 +1656,10 @@
                 colors: ['#22c55e', '#f59e0b', '#ef4444'],
                 legend: {
                     position: 'bottom',
-                    labels: { colors: '#9ca3af' }
+                    labels: { colors: '#64748b' }
                 },
                 dataLabels: { enabled: false },
-                theme: { mode: 'dark' }
+                theme: { mode: 'light' }
             };
             var donutChart = new ApexCharts(document.querySelector("#riskDonutChart"), donutOptions);
             donutChart.render();
@@ -1638,13 +1679,13 @@
                 colors: ['#2563eb'],
                 xaxis: {
                     categories: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
-                    labels: { style: { colors: '#9ca3af' } }
+                    labels: { style: { colors: '#64748b' } }
                 },
                 yaxis: {
-                    labels: { style: { colors: '#9ca3af' } }
+                    labels: { style: { colors: '#64748b' } }
                 },
-                grid: { borderColor: 'rgba(255,255,255,0.05)' },
-                theme: { mode: 'dark' }
+                grid: { borderColor: '#e2e8f0' },
+                theme: { mode: 'light' }
             };
             var ratingChart = new ApexCharts(document.querySelector("#ratingChart"), ratingOptions);
             ratingChart.render();
@@ -1658,7 +1699,7 @@
                 ],
                 chart: { type: 'heatmap', height: 260, toolbar: {show: false}, background: 'transparent' },
                 colors: ['#ef4444'],
-                theme: { mode: 'dark' }
+                theme: { mode: 'light' }
             };
             var heatmapChart = new ApexCharts(document.querySelector("#riskHeatmapChart"), heatmapOptions);
             heatmapChart.render();
@@ -1671,13 +1712,13 @@
                 }],
                 chart: { type: 'bar', height: 260, toolbar: {show: false}, background: 'transparent' },
                 plotOptions: { bar: { horizontal: true } },
-                colors: ['#4f46e5'],
+                colors: ['#1e3a8a'],
                 xaxis: {
                     categories: ['Kredi Derecesi (Grade)', 'Borç / Gelir Oranı (DTI)', 'Faiz Oranı', 'Sicil İhlal Geçmişi', 'Çalışma Süresi', 'Yaş'],
-                    labels: { style: { colors: '#9ca3af' } }
+                    labels: { style: { colors: '#64748b' } }
                 },
-                yaxis: { labels: { style: { colors: '#9ca3af' } } },
-                theme: { mode: 'dark' }
+                yaxis: { labels: { style: { colors: '#64748b' } } },
+                theme: { mode: 'light' }
             };
             var featureChart = new ApexCharts(document.querySelector("#featureImportanceChart"), featureOptions);
             featureChart.render();
