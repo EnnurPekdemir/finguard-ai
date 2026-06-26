@@ -19,38 +19,110 @@ FinGuard, **SentinelBank** bünyesindeki kredi başvurularını makine öğrenme
 
 ## 🛠️ Teknolojiler (Tech Stack)
 
-*   **Backend**: Python, FastAPI
-*   **Machine Learning**: Scikit-Learn (Random Forest Classifier), Pandas, NumPy, Joblib
-*   **Frontend**: HTML5, Vanilla CSS3 (Custom Variables, Keyframe Animations), Vanilla JS (Fetch API)
-*   **Server**: Uvicorn (StatReload)
+| Katman | Teknolojiler |
+|--------|-------------|
+| **Backend (API)** | Java 17, Spring Boot 4.1, Spring Data JPA, Hibernate, Lombok |
+| **ML Servisi** | Python, FastAPI, Scikit-Learn (Random Forest), Pandas, NumPy, Joblib |
+| **Veritabanı** | MySQL 8 |
+| **Frontend** | HTML5, Vanilla CSS3 (Custom Variables, Keyframe Animations), Vanilla JS (Fetch API) |
+| **Sunucular** | Tomcat (Spring Boot :8081), Uvicorn (FastAPI :8000) |
+
+---
+
+## 🏗️ Proje Mimarisi
+
+Proje iki bağımsız servis olarak çalışır:
+
+```
+┌─────────────────────────┐      ┌──────────────────────────┐
+│   Spring Boot Backend   │      │   FastAPI ML Servisi     │
+│        :8081            │─────▶│        :8000             │
+│                         │ HTTP │                          │
+│  • Müşteri CRUD         │      │  • /predict endpoint     │
+│  • Kredi Başvuru Yönetim│      │  • Random Forest Model   │
+│  • İş Kuralları         │      │  • Shannon Entropy       │
+└───────────┬─────────────┘      └──────────────────────────┘
+            │
+     ┌──────▼──────┐
+     │  MySQL 8    │
+     │ finguard_db │
+     └─────────────┘
+```
+
+### Spring Boot Backend Katman Yapısı
+
+```
+com.sentinelbank.finguard/
+├── controller/       → REST API endpoint'leri (@RestController)
+├── service/          → İş mantığı katmanı (@Service)
+├── repository/       → Veritabanı erişim katmanı (JpaRepository)
+├── model/            → JPA Entity sınıfları (@Entity)
+└── dto/              → Veri transfer nesneleri (Request/Response)
+```
 
 ---
 
 ## 📦 Kurulum ve Çalıştırma (Installation & Running)
 
-### 1. Gereksinimleri Yükleyin
+### 1. ML Servisi (FastAPI)
+
 Gerekli Python paketlerinin kurulu olduğundan emin olun:
 ```bash
 pip install fastapi uvicorn scikit-learn pandas numpy joblib
 ```
 
-### 2. Sunucuyu Başlatın
-Uvicorn sunucusunu otomatik yenileme (reload) moduyla ayağa kaldırın:
+Uvicorn sunucusunu başlatın:
 ```bash
 uvicorn main:app --reload
 ```
+Arayüz: `http://127.0.0.1:8000/`
 
-### 3. Tarayıcıdan Erişin
-Arayüze erişmek için tarayıcınızda şu adresi açın:
+### 2. Spring Boot Backend
+
+**Ön koşul:** MySQL 8 kurulu ve çalışır durumda olmalıdır.
+
+Veritabanını oluşturun:
+```sql
+CREATE DATABASE finguard_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
-http://127.0.0.1:8000/
+
+`application.properties` dosyasındaki bağlantı bilgilerini kendi MySQL ayarlarınıza göre düzenleyin, ardından:
+```bash
+cd finguard-backend
+./mvnw spring-boot:run
 ```
+API: `http://localhost:8081/api/`
 
 ---
 
 ## 🔌 API Entegrasyon Kılavuzu (API Documentation)
 
-### **`POST /predict`**
+### Spring Boot REST API — Müşteri Yönetimi
+
+| Method | Endpoint | Açıklama |
+|--------|----------|----------|
+| `POST` | `/api/customers` | Yeni müşteri oluştur |
+| `GET` | `/api/customers` | Tüm müşterileri listele |
+| `GET` | `/api/customers/{id}` | ID ile müşteri getir |
+| `PUT` | `/api/customers/{id}` | Müşteri bilgilerini güncelle |
+| `DELETE` | `/api/customers/{id}` | Müşteri sil |
+
+**Örnek — Yeni Müşteri Oluşturma:**
+```bash
+POST http://localhost:8081/api/customers
+Content-Type: application/json
+
+{
+  "name": "Ahmet Yılmaz",
+  "identityNumber": "12345678901",
+  "email": "ahmet.yilmaz@email.com",
+  "monthlyIncome": 25000.0
+}
+```
+
+---
+
+### FastAPI ML Servisi — `POST /predict`
 
 Kredi başvurularını değerlendirmek için kullanılan ana endpoint'tir.
 
