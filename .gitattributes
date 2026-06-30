@@ -1,0 +1,6 @@
+# GitHub'ın dil analizinde HTML arayüzünü yok sayması için (Java ve Python'ın öne çıkması amacıyla)
+index.html linguist-detectable=false
+*.html linguist-detectable=false
+
+# Jupyter Notebook dosyasını da dil istatistiklerinden hariç tutmak istersen (sadece saf Python .py dosyaları görünsün):
+*.ipynb linguist-detectable=false
