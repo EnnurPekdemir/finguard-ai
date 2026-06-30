@@ -1,5 +1,7 @@
 package com.sentinelbank.finguard.service;
 
+import com.sentinelbank.finguard.dto.CreditApplicationRequestDTO;
+import com.sentinelbank.finguard.dto.MLPredictionResponseDTO;
 import com.sentinelbank.finguard.model.ApplicationStatus;
 import com.sentinelbank.finguard.model.CreditApplication;
 import com.sentinelbank.finguard.model.Customer;
@@ -14,7 +16,7 @@ import java.util.List;
  * Kredi başvurusu iş mantığı katmanı.
  *
  * <p>Başvuru oluşturma, sorgulama ve durum güncelleme operasyonlarını
- * içerir. İleride ML servis entegrasyonu bu katmana eklenecektir.</p>
+ * içerir. ML servis entegrasyonu bu katmanda yer almaktadır.</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -23,46 +25,70 @@ public class CreditApplicationService {
 
     private final CreditApplicationRepository creditApplicationRepository;
     private final CustomerService customerService;
+    private final MLClientService mlClientService;
 
     // ─────────────────────────────────────────────
     //  CREATE
     // ─────────────────────────────────────────────
 
     /**
-     * Yeni bir kredi başvurusu oluşturur.
+     * Yeni bir kredi başvurusu oluşturur ve ML servisine sorgular.
      *
-     * <p>Başvuru, belirtilen müşteriye bağlanır.
-     * Başlangıç durumu {@link ApplicationStatus#PENDING} olarak atanır.
-     * {@code applicationDate} alanı {@code @PrePersist} ile otomatik set edilir.</p>
-     *
-     * <p><strong>İleride:</strong> Bu metot, başvuru kaydedildikten sonra
-     * FastAPI ML servisini çağırarak {@code entropyScore} ve nihai
-     * {@code status} değerlerini otomatik olarak güncelleyecektir.</p>
-     *
-     * @param customerId      başvuruyu yapan müşterinin ID'si
-     * @param requestedAmount talep edilen kredi tutarı (TL)
-     * @return veritabanına kaydedilmiş başvuru (id ve applicationDate atanmış)
-     * @throws IllegalArgumentException müşteri bulunamazsa veya tutar geçersizse
+     * @param request kredi başvuru verileri ve risk parametrelerini içeren DTO
+     * @return veritabanına kaydedilmiş ve ML sonucuna göre güncellenmiş başvuru
      */
-    public CreditApplication createApplication(Long customerId, Double requestedAmount) {
-        // Tutar doğrulama
-        if (requestedAmount == null || requestedAmount <= 0) {
-            throw new IllegalArgumentException(
-                "Talep edilen kredi tutarı sıfırdan büyük olmalıdır."
-            );
+    public CreditApplication createApplication(CreditApplicationRequestDTO request) {
+        if (request.getCustomerId() == null) {
+            throw new IllegalArgumentException("Müşteri ID'si boş olamaz.");
+        }
+        if (request.getRequestedAmount() == null || request.getRequestedAmount() <= 0) {
+            throw new IllegalArgumentException("Talep edilen kredi tutarı sıfırdan büyük olmalıdır.");
         }
 
         // Müşteriyi bul (yoksa exception fırlatır)
-        Customer customer = customerService.getCustomerById(customerId);
+        Customer customer = customerService.getCustomerById(request.getCustomerId());
 
-        // Başvuruyu oluştur
+        // Başvuruyu ilk olarak PENDING olarak oluştur
         CreditApplication application = CreditApplication.builder()
             .customer(customer)
-            .requestedAmount(requestedAmount)
+            .requestedAmount(request.getRequestedAmount())
             .status(ApplicationStatus.PENDING)
             .build();
 
-        return creditApplicationRepository.save(application);
+        // İlk kaydı yap (ID alabilmek için)
+        application = creditApplicationRepository.save(application);
+
+        // FastAPI ML servisini çağırarak risk skorunu hesapla
+        try {
+            MLPredictionResponseDTO prediction = mlClientService.predictCreditRisk(request, customer);
+
+            // Gelen sonuca göre başvuruyu güncelle
+            application.setEntropyScore(prediction.getEntropyScore());
+
+            String decisionFlow = prediction.getDecisionFlow();
+            if ("SISTEM_ONAY".equalsIgnoreCase(decisionFlow)) {
+                application.setStatus(ApplicationStatus.APPROVED);
+            } else if ("SISTEM_RED".equalsIgnoreCase(decisionFlow)) {
+                application.setStatus(ApplicationStatus.REJECTED);
+            } else if ("MANUEL_INCELEME".equalsIgnoreCase(decisionFlow)) {
+                application.setStatus(ApplicationStatus.MANUAL_REVIEW);
+            } else {
+                // Fallback: prediction flag'ine göre karar ver
+                if (prediction.getPrediction() != null && prediction.getPrediction() == 1) {
+                    application.setStatus(ApplicationStatus.REJECTED);
+                } else {
+                    application.setStatus(ApplicationStatus.APPROVED);
+                }
+            }
+
+            // Güncellenmiş başvuruyu kaydet
+            application = creditApplicationRepository.save(application);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Kredi başvurusu değerlendirilirken risk analiz motoruna bağlanılamadı: " + e.getMessage(), e);
+        }
+
+        return application;
     }
 
     // ─────────────────────────────────────────────
@@ -126,9 +152,6 @@ public class CreditApplicationService {
     /**
      * Başvurunun durumunu günceller.
      *
-     * <p>Genellikle ML servisinden dönen sonuç sonrası veya
-     * analist tarafından manuel inceleme tamamlandığında kullanılır.</p>
-     *
      * @param id     başvuru ID'si
      * @param status yeni durum
      * @return güncellenmiş başvuru
@@ -142,8 +165,6 @@ public class CreditApplicationService {
 
     /**
      * Başvurunun entropy skorunu ve durumunu birlikte günceller.
-     *
-     * <p>ML servisinden dönen sonuç sonrası çağrılması amaçlanmıştır.</p>
      *
      * @param id           başvuru ID'si
      * @param entropyScore Shannon Entropy skoru (0.0 – 1.0)
