@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 /**
- * FastAPI ML servisinden (/predict) dönen tahmini temsil eden DTO.
+ * DTO representing the risk prediction response returned from FastAPI /predict endpoint.
  */
 @Data
 @NoArgsConstructor

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * FastAPI ML servisi ile iletişim kuran client servis.
+ * REST Client Service communicating with the FastAPI ML service.
  */
 @Service
 public class MLClientService {
@@ -22,55 +22,55 @@ public class MLClientService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     /**
-     * FastAPI /predict endpoint'ine kredi başvuru verilerini gönderir
-     * ve ML model tahminini döndürür.
+     * Sends the credit application risk parameters to FastAPI /predict endpoint
+     * and returns the ML model prediction results.
      *
-     * @param request  kredi başvuru isteği risk parametreleri
-     * @param customer başvuruyu yapan müşteri
-     * @return modelden dönen tahmin sonucu DTO'su
+     * @param request  Credit application request containing risk parameters
+     * @param customer Customer who makes the application
+     * @return ML prediction response DTO
      */
     public MLPredictionResponseDTO predictCreditRisk(CreditApplicationRequestDTO request, Customer customer) {
         String url = mlServiceUrl + "/predict";
 
-        // FastAPI'nin beklediği alan adlarıyla eşleyelim
+        // Map fields to match FastAPI input properties
         Map<String, Object> payload = new HashMap<>();
 
-        // Yaş parametresi (varsayılan: 30)
+        // Age parameter (default: 30)
         payload.put("person_age", request.getAge() != null ? request.getAge() : 30);
 
-        // Yıllık Gelir (varsayılan: müşterinin aylık geliri * 12)
+        // Annual Income (default: customer monthly income * 12)
         double annualIncome = (customer.getMonthlyIncome() != null) ? customer.getMonthlyIncome() * 12 : 60000.0;
         payload.put("person_income", (int) annualIncome);
 
-        // Ev sahipliği (varsayılan: RENT)
+        // Home ownership (default: RENT)
         payload.put("person_home_ownership", request.getHomeOwnership() != null ? request.getHomeOwnership().toUpperCase() : "RENT");
 
-        // Çalışma süresi (varsayılan: 4.0 yıl)
+        // Employment length (default: 4.0 years)
         payload.put("person_emp_length", request.getEmploymentLength() != null ? request.getEmploymentLength() : 4.0);
 
-        // Kredi amacı (varsayılan: PERSONAL)
+        // Loan intent (default: PERSONAL)
         payload.put("loan_intent", request.getLoanIntent() != null ? request.getLoanIntent().toUpperCase() : "PERSONAL");
 
-        // Kredi notu derecesi (varsayılan: C)
+        // Loan grade (default: C)
         payload.put("loan_grade", request.getLoanGrade() != null ? request.getLoanGrade().toUpperCase() : "C");
 
-        // Talep edilen miktar (varsayılan: talep edilen tutar)
+        // Requested loan amount (default: requested amount)
         double requestedAmount = (request.getRequestedAmount() != null) ? request.getRequestedAmount() : 10000.0;
         payload.put("loan_amnt", (int) requestedAmount);
 
-        // Kredi faiz oranı (varsayılan: 11.0%)
+        // Loan interest rate (default: 11.0%)
         payload.put("loan_int_rate", request.getLoanInterestRate() != null ? request.getLoanInterestRate() : 11.0);
 
-        // Geçmiş ihlal kaydı (varsayılan: N)
+        // Default on file (default: N)
         payload.put("cb_person_default_on_file", request.getDefaultOnFile() != null ? request.getDefaultOnFile().toUpperCase() : "N");
 
-        // Kredi sicil geçmişi uzunluğu (varsayılan: 3 yıl)
+        // Credit history length (default: 3 years)
         payload.put("cb_person_cred_hist_length", request.getCreditHistoryLength() != null ? request.getCreditHistoryLength() : 3);
 
         try {
             return restTemplate.postForObject(url, payload, MLPredictionResponseDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("ML tahmini hesaplanırken bir hata oluştu: " + e.getMessage(), e);
+            throw new RuntimeException("An error occurred during ML prediction calculation: " + e.getMessage(), e);
         }
     }
 }

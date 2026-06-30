@@ -10,11 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Kredi başvuruları REST API controller'ı.
+ * REST Controller for managing credit applications.
  */
 @RestController
 @RequestMapping("/api/credit-applications")
@@ -25,36 +24,22 @@ public class CreditApplicationController {
     private final CreditApplicationService creditApplicationService;
 
     /**
-     * Yeni kredi başvurusu oluşturur. ML tahmin motoru tetiklenir ve sonuç kaydedilir.
+     * Creates a new credit application. Triggers the ML prediction engine.
      *
-     * @param requestDTO başvuru verileri ve ML parametreleri
-     * @return oluşturulan başvuru bilgileri (201 Created)
+     * @param requestDTO Application request data and risk parameters
+     * @return Response containing the created application details (201 Created)
      */
     @PostMapping
-    public ResponseEntity<?> createApplication(@RequestBody CreditApplicationRequestDTO requestDTO) {
-        try {
-            CreditApplication application = creditApplicationService.createApplication(requestDTO);
-            CreditApplicationResponseDTO responseDTO = toResponseDTO(application);
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        }
+    public ResponseEntity<CreditApplicationResponseDTO> createApplication(@RequestBody CreditApplicationRequestDTO requestDTO) {
+        CreditApplication application = creditApplicationService.createApplication(requestDTO);
+        CreditApplicationResponseDTO responseDTO = toResponseDTO(application);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     /**
-     * Tüm kredi başvurularını listeler.
+     * Lists all credit applications.
      *
-     * @return tüm başvurular listesi (200 OK)
+     * @return List of all credit application response DTOs
      */
     @GetMapping
     public ResponseEntity<List<CreditApplicationResponseDTO>> getAllApplications() {
@@ -66,71 +51,47 @@ public class CreditApplicationController {
     }
 
     /**
-     * ID ile kredi başvurusu getirir.
+     * Retrieves a credit application by ID.
      *
-     * @param id başvuru ID'si
-     * @return başvuru detayı (200 OK) veya hata (404 Not Found)
+     * @param id Application ID
+     * @return Credit application details
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getApplicationById(@PathVariable Long id) {
-        try {
-            CreditApplication application = creditApplicationService.getApplicationById(id);
-            CreditApplicationResponseDTO responseDTO = toResponseDTO(application);
-            return ResponseEntity.ok(responseDTO);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        }
+    public ResponseEntity<CreditApplicationResponseDTO> getApplicationById(@PathVariable Long id) {
+        CreditApplication application = creditApplicationService.getApplicationById(id);
+        CreditApplicationResponseDTO responseDTO = toResponseDTO(application);
+        return ResponseEntity.ok(responseDTO);
     }
 
     /**
-     * Belirli bir müşteriye ait tüm kredi başvurularını getirir.
+     * Retrieves all credit applications belonging to a specific customer.
      *
-     * @param customerId müşteri ID'si
-     * @return müşteriye ait başvurular listesi (200 OK)
+     * @param customerId Customer ID
+     * @return List of applications belonging to the customer
      */
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<?> getApplicationsByCustomerId(@PathVariable Long customerId) {
-        try {
-            List<CreditApplication> applications = creditApplicationService.getApplicationsByCustomerId(customerId);
-            List<CreditApplicationResponseDTO> responseDTOs = applications.stream()
-                .map(this::toResponseDTO)
-                .collect(Collectors.toList());
-            return ResponseEntity.ok(responseDTOs);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        }
+    public ResponseEntity<List<CreditApplicationResponseDTO>> getApplicationsByCustomerId(@PathVariable Long customerId) {
+        List<CreditApplication> applications = creditApplicationService.getApplicationsByCustomerId(customerId);
+        List<CreditApplicationResponseDTO> responseDTOs = applications.stream()
+            .map(this::toResponseDTO)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(responseDTOs);
     }
 
     /**
-     * ID ile kredi başvurusu siler.
+     * Deletes a credit application by ID.
      *
-     * @param id silinecek başvuru ID'si
-     * @return 204 No Content veya hata (404 Not Found)
+     * @param id Application ID to be deleted
+     * @return 204 No Content
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteApplication(@PathVariable Long id) {
-        try {
-            creditApplicationService.deleteApplication(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        }
+    public ResponseEntity<Void> deleteApplication(@PathVariable Long id) {
+        creditApplicationService.deleteApplication(id);
+        return ResponseEntity.noContent().build();
     }
 
     /**
-     * Entity -> DTO dönüşümü yapar.
+     * Maps CreditApplication entity to CreditApplicationResponseDTO.
      */
     private CreditApplicationResponseDTO toResponseDTO(CreditApplication application) {
         return CreditApplicationResponseDTO.builder()

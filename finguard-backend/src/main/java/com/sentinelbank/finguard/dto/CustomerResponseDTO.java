@@ -5,10 +5,10 @@ import lombok.*;
 import java.util.List;
 
 /**
- * Müşteri bilgisi yanıtı için kullanılan DTO.
+ * DTO representing customer profile response details.
  *
- * <p>Entity'nin iç yapısını gizler ve müşteriye ait kredi
- * başvurularını özetlenmiş biçimde döndürür.</p>
+ * <p>Decouples database structure from API response and contains simplified
+ * credit applications list to avoid circular dependencies.</p>
  */
 @Data
 @NoArgsConstructor

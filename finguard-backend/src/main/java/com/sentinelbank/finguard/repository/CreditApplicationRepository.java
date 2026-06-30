@@ -8,37 +8,37 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * Kredi başvurusu entity'si için veritabanı erişim katmanı.
+ * Database access layer for CreditApplication entity.
  *
- * <p>{@link JpaRepository} sayesinde temel CRUD operasyonları
- * (save, findById, findAll, deleteById, vb.) otomatik olarak sağlanır.</p>
+ * <p>Standard CRUD operations (save, findById, findAll, deleteById, etc.)
+ * are automatically provided by {@link JpaRepository}.</p>
  */
 @Repository
 public interface CreditApplicationRepository extends JpaRepository<CreditApplication, Long> {
 
     /**
-     * Belirli bir müşteriye ait tüm kredi başvurularını getirir.
+     * Gets all credit applications belonging to a specific customer.
      *
-     * @param customerId müşteri ID'si
-     * @return başvuru listesi (boş olabilir)
+     * @param customerId customer ID
+     * @return list of applications (can be empty)
      */
     List<CreditApplication> findByCustomerId(Long customerId);
 
     /**
-     * Belirli bir duruma sahip tüm başvuruları getirir.
-     * Örneğin: tüm {@code PENDING} veya {@code MANUAL_REVIEW} başvuruları.
+     * Gets all applications with a specific status.
+     * For example, all {@code PENDING} or {@code MANUAL_REVIEW} applications.
      *
-     * @param status başvuru durumu
-     * @return başvuru listesi
+     * @param status application status
+     * @return list of applications
      */
     List<CreditApplication> findByStatus(ApplicationStatus status);
 
     /**
-     * Bir müşteriye ait, belirli durumdaki başvuruları getirir.
+     * Gets applications belonging to a customer with a specific status.
      *
-     * @param customerId müşteri ID'si
-     * @param status     başvuru durumu
-     * @return filtrelenmiş başvuru listesi
+     * @param customerId customer ID
+     * @param status     application status
+     * @return filtered list of applications
      */
     List<CreditApplication> findByCustomerIdAndStatus(Long customerId, ApplicationStatus status);
 }

@@ -6,12 +6,10 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * Kredi başvurusu yanıtı için kullanılan DTO.
+ * DTO representing a credit application response.
  *
- * <p>Entity'deki {@code Customer} referansı yerine sadece
- * {@code customerId} ve {@code customerName} döndürülür.
- * Böylece sonsuz döngü (infinite recursion) riski ortadan kalkar
- * ve yanıt boyutu küçülür.</p>
+ * <p>Contains basic application information including status and entropy score.
+ * Instead of the full customer object, only ID and name are included to avoid infinite recursion.</p>
  */
 @Data
 @NoArgsConstructor

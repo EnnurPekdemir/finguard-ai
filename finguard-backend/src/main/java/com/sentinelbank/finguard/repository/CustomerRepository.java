@@ -7,43 +7,43 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Müşteri entity'si için veritabanı erişim katmanı.
+ * Database access layer for Customer entity.
  *
- * <p>{@link JpaRepository} sayesinde temel CRUD operasyonları
- * (save, findById, findAll, deleteById, vb.) otomatik olarak sağlanır.</p>
+ * <p>Standard CRUD operations (save, findById, findAll, deleteById, etc.)
+ * are automatically provided by {@link JpaRepository}.</p>
  */
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     /**
-     * T.C. Kimlik Numarasına göre müşteri arar.
+     * Finds a customer by National Identity Number.
      *
-     * @param identityNumber 11 haneli T.C. kimlik numarası
-     * @return bulunan müşteri veya {@link Optional#empty()}
+     * @param identityNumber 11-digit national identity number
+     * @return Optional containing the found customer, or empty
      */
     Optional<Customer> findByIdentityNumber(String identityNumber);
 
     /**
-     * Verilen T.C. Kimlik Numarasının veritabanında kayıtlı olup olmadığını kontrol eder.
+     * Checks if a customer exists with the given National Identity Number.
      *
-     * @param identityNumber 11 haneli T.C. kimlik numarası
-     * @return varsa {@code true}, yoksa {@code false}
+     * @param identityNumber 11-digit national identity number
+     * @return true if exists, false otherwise
      */
     boolean existsByIdentityNumber(String identityNumber);
 
     /**
-     * E-posta adresine göre müşteri arar.
+     * Finds a customer by email address.
      *
-     * @param email müşteri e-posta adresi
-     * @return bulunan müşteri veya {@link Optional#empty()}
+     * @param email customer email address
+     * @return Optional containing the found customer, or empty
      */
     Optional<Customer> findByEmail(String email);
 
     /**
-     * Verilen e-posta adresinin veritabanında kayıtlı olup olmadığını kontrol eder.
+     * Checks if a customer exists with the given email address.
      *
-     * @param email müşteri e-posta adresi
-     * @return varsa {@code true}, yoksa {@code false}
+     * @param email customer email address
+     * @return true if exists, false otherwise
      */
     boolean existsByEmail(String email);
 }

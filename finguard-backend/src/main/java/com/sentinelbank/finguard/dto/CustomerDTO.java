@@ -3,15 +3,10 @@ package com.sentinelbank.finguard.dto;
 import lombok.*;
 
 /**
- * Müşteri oluşturma ve güncelleme istekleri için kullanılan DTO.
+ * DTO representing customer creation and update requests.
  *
- * <p>Entity sınıfını ({@code Customer}) doğrudan API'ye açmak yerine
- * bu DTO kullanılır. Böylece:</p>
- * <ul>
- *   <li>İç veri modeli dış dünyadan gizlenir (güvenlik)</li>
- *   <li>API kontratı, entity'den bağımsız olarak versiyonlanabilir</li>
- *   <li>İstemciye gereksiz alanlar (id, creditApplications listesi) gönderilmez</li>
- * </ul>
+ * <p>Used instead of exposing the Customer entity directly to prevent security risks
+ * and decouple API contracts from database schema definitions.</p>
  */
 @Data
 @NoArgsConstructor

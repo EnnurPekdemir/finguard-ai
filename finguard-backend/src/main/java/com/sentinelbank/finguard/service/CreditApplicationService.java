@@ -7,20 +7,21 @@ import com.sentinelbank.finguard.model.CreditApplication;
 import com.sentinelbank.finguard.model.Customer;
 import com.sentinelbank.finguard.repository.CreditApplicationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
- * Kredi başvurusu iş mantığı katmanı.
+ * Credit application business logic service layer.
  *
- * <p>Başvuru oluşturma, sorgulama ve durum güncelleme operasyonlarını
- * içerir. ML servis entegrasyonu bu katmanda yer almaktadır.</p>
+ * <p>Handles application creation, retrieval, status updates, and ML service integration.</p>
  */
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CreditApplicationService {
 
     private final CreditApplicationRepository creditApplicationRepository;
@@ -32,60 +33,77 @@ public class CreditApplicationService {
     // ─────────────────────────────────────────────
 
     /**
-     * Yeni bir kredi başvurusu oluşturur ve ML servisine sorgular.
+     * Creates a new credit application and queries the ML service.
      *
-     * @param request kredi başvuru verileri ve risk parametrelerini içeren DTO
-     * @return veritabanına kaydedilmiş ve ML sonucuna göre güncellenmiş başvuru
+     * @param request DTO containing application data and risk parameters
+     * @return Saved credit application updated with ML decision
      */
     public CreditApplication createApplication(CreditApplicationRequestDTO request) {
+        log.info("New credit application request received. Customer ID: {}, Requested Amount: {} TL", 
+                request.getCustomerId(), request.getRequestedAmount());
+
         if (request.getCustomerId() == null) {
-            throw new IllegalArgumentException("Müşteri ID'si boş olamaz.");
+            log.error("Credit application error: Customer ID is empty.");
+            throw new IllegalArgumentException("Customer ID cannot be empty.");
         }
         if (request.getRequestedAmount() == null || request.getRequestedAmount() <= 0) {
-            throw new IllegalArgumentException("Talep edilen kredi tutarı sıfırdan büyük olmalıdır.");
+            log.error("Credit application error: Invalid requested amount: {}", request.getRequestedAmount());
+            throw new IllegalArgumentException("Requested loan amount must be greater than zero.");
         }
 
-        // Müşteriyi bul (yoksa exception fırlatır)
+        // Retrieve customer (throws exception if not found)
         Customer customer = customerService.getCustomerById(request.getCustomerId());
 
-        // Başvuruyu ilk olarak PENDING olarak oluştur
+        // Create the application with PENDING status initially
         CreditApplication application = CreditApplication.builder()
             .customer(customer)
             .requestedAmount(request.getRequestedAmount())
             .status(ApplicationStatus.PENDING)
             .build();
 
-        // İlk kaydı yap (ID alabilmek için)
+        // Perform initial save (to obtain auto-generated ID)
         application = creditApplicationRepository.save(application);
+        log.debug("Application temporarily saved with status PENDING. Application ID: {}", application.getId());
 
-        // FastAPI ML servisini çağırarak risk skorunu hesapla
+        // Query the FastAPI ML service for risk score
         try {
+            log.info("Querying risk analysis from FastAPI ML service. Application ID: {}", application.getId());
             MLPredictionResponseDTO prediction = mlClientService.predictCreditRisk(request, customer);
 
-            // Gelen sonuca göre başvuruyu güncelle
+            // Update application with the prediction details
             application.setEntropyScore(prediction.getEntropyScore());
 
             String decisionFlow = prediction.getDecisionFlow();
+            log.info("Response received from ML service. Decision Flow: {}, Uncertainty Score (Entropy): {}", 
+                    decisionFlow, prediction.getEntropyScore());
+
             if ("SISTEM_ONAY".equalsIgnoreCase(decisionFlow)) {
                 application.setStatus(ApplicationStatus.APPROVED);
+                log.info("Application automatically approved. Application ID: {}", application.getId());
             } else if ("SISTEM_RED".equalsIgnoreCase(decisionFlow)) {
                 application.setStatus(ApplicationStatus.REJECTED);
+                log.info("Application automatically rejected. Application ID: {}", application.getId());
             } else if ("MANUEL_INCELEME".equalsIgnoreCase(decisionFlow)) {
                 application.setStatus(ApplicationStatus.MANUAL_REVIEW);
+                log.warn("WARNING: High decision uncertainty (Entropy > 0.8)! Application sent for manual review. Application ID: {}, Entropy: {}", 
+                        application.getId(), prediction.getEntropyScore());
             } else {
-                // Fallback: prediction flag'ine göre karar ver
+                // Fallback: decide based on prediction flag
                 if (prediction.getPrediction() != null && prediction.getPrediction() == 1) {
                     application.setStatus(ApplicationStatus.REJECTED);
+                    log.info("Application rejected as fallback. Application ID: {}", application.getId());
                 } else {
                     application.setStatus(ApplicationStatus.APPROVED);
+                    log.info("Application approved as fallback. Application ID: {}", application.getId());
                 }
             }
 
-            // Güncellenmiş başvuruyu kaydet
+            // Save the updated application
             application = creditApplicationRepository.save(application);
 
         } catch (Exception e) {
-            throw new RuntimeException("Kredi başvurusu değerlendirilirken risk analiz motoruna bağlanılamadı: " + e.getMessage(), e);
+            log.error("Critical error occurred during communication with ML service: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to connect to risk analysis engine while evaluating credit application: " + e.getMessage(), e);
         }
 
         return application;
@@ -96,24 +114,24 @@ public class CreditApplicationService {
     // ─────────────────────────────────────────────
 
     /**
-     * ID'ye göre kredi başvurusu getirir.
+     * Retrieves a credit application by ID.
      *
-     * @param id başvuru ID'si
-     * @return bulunan başvuru
-     * @throws IllegalArgumentException başvuru bulunamazsa
+     * @param id Application ID
+     * @return Found credit application
+     * @throws IllegalArgumentException if the application is not found
      */
     @Transactional(readOnly = true)
     public CreditApplication getApplicationById(Long id) {
         return creditApplicationRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException(
-                "Kredi başvurusu bulunamadı. ID: " + id
+                "Credit application not found. ID: " + id
             ));
     }
 
     /**
-     * Tüm kredi başvurularını listeler.
+     * Lists all credit applications.
      *
-     * @return başvuru listesi
+     * @return List of applications
      */
     @Transactional(readOnly = true)
     public List<CreditApplication> getAllApplications() {
@@ -121,24 +139,24 @@ public class CreditApplicationService {
     }
 
     /**
-     * Belirli bir müşteriye ait tüm kredi başvurularını getirir.
+     * Gets all credit applications belonging to a specific customer.
      *
-     * @param customerId müşteri ID'si
-     * @return o müşteriye ait başvuru listesi
+     * @param customerId Customer ID
+     * @return List of applications belonging to the customer
      */
     @Transactional(readOnly = true)
     public List<CreditApplication> getApplicationsByCustomerId(Long customerId) {
-        // Müşterinin var olduğunu doğrula
+        // Verify customer exists
         customerService.getCustomerById(customerId);
         return creditApplicationRepository.findByCustomerId(customerId);
     }
 
     /**
-     * Belirli bir durumdaki tüm başvuruları listeler.
-     * Örneğin: tüm PENDING veya MANUAL_REVIEW başvurularını getirmek için.
+     * Lists all applications with a specific status.
+     * Useful for fetching PENDING or MANUAL_REVIEW applications.
      *
-     * @param status filtrelenecek durum
-     * @return filtrelenmiş başvuru listesi
+     * @param status Status to filter
+     * @return Filtered list of applications
      */
     @Transactional(readOnly = true)
     public List<CreditApplication> getApplicationsByStatus(ApplicationStatus status) {
@@ -150,12 +168,12 @@ public class CreditApplicationService {
     // ─────────────────────────────────────────────
 
     /**
-     * Başvurunun durumunu günceller.
+     * Updates the status of an application.
      *
-     * @param id     başvuru ID'si
-     * @param status yeni durum
-     * @return güncellenmiş başvuru
-     * @throws IllegalArgumentException başvuru bulunamazsa
+     * @param id     Application ID
+     * @param status New status
+     * @return Updated application
+     * @throws IllegalArgumentException if application is not found
      */
     public CreditApplication updateApplicationStatus(Long id, ApplicationStatus status) {
         CreditApplication application = getApplicationById(id);
@@ -164,13 +182,13 @@ public class CreditApplicationService {
     }
 
     /**
-     * Başvurunun entropy skorunu ve durumunu birlikte günceller.
+     * Updates both the entropy score and status of an application.
      *
-     * @param id           başvuru ID'si
-     * @param entropyScore Shannon Entropy skoru (0.0 – 1.0)
-     * @param status       ML sonucuna göre belirlenen yeni durum
-     * @return güncellenmiş başvuru
-     * @throws IllegalArgumentException başvuru bulunamazsa
+     * @param id           Application ID
+     * @param entropyScore Shannon Entropy score (0.0 - 1.0)
+     * @param status       New status determined by ML result
+     * @return Updated application
+     * @throws IllegalArgumentException if application is not found
      */
     public CreditApplication updateApplicationWithMLResult(Long id, Double entropyScore, ApplicationStatus status) {
         CreditApplication application = getApplicationById(id);
@@ -184,10 +202,10 @@ public class CreditApplicationService {
     // ─────────────────────────────────────────────
 
     /**
-     * Kredi başvurusunu siler.
+     * Deletes a credit application.
      *
-     * @param id silinecek başvurunun ID'si
-     * @throws IllegalArgumentException başvuru bulunamazsa
+     * @param id Application ID to be deleted
+     * @throws IllegalArgumentException if application is not found
      */
     public void deleteApplication(Long id) {
         CreditApplication application = getApplicationById(id);

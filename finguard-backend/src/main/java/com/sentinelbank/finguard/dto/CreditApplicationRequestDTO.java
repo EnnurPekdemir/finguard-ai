@@ -3,10 +3,10 @@ package com.sentinelbank.finguard.dto;
 import lombok.*;
 
 /**
- * Kredi başvurusu oluşturma isteği için kullanılan DTO.
+ * DTO representing a request to create a credit application.
  *
- * <p>İstemci müşteri ID'si, talep ettiği tutar ve model tahmini için
- * gerekli risk parametrelerini gönderir.</p>
+ * <p>The client sends the customer ID, requested loan amount, and risk parameters
+ * required for the ML prediction.</p>
  */
 @Data
 @NoArgsConstructor
@@ -17,7 +17,7 @@ public class CreditApplicationRequestDTO {
     private Long customerId;
     private Double requestedAmount;
 
-    // ML tahmin parametreleri
+    // ML prediction parameters
     private Integer age;
     private String homeOwnership;
     private Double employmentLength;

@@ -1,13 +1,13 @@
 package com.sentinelbank.finguard.model;
 
 /**
- * Kredi başvurusunun olası durumlarını temsil eden enum.
+ * Enum representing the possible statuses of a credit application.
  *
  * <ul>
- *   <li>{@code PENDING}        — Başvuru henüz değerlendirilmedi.</li>
- *   <li>{@code APPROVED}       — Sistem tarafından otomatik onaylandı (düşük risk).</li>
- *   <li>{@code REJECTED}       — Sistem tarafından otomatik reddedildi (yüksek risk).</li>
- *   <li>{@code MANUAL_REVIEW}  — Entropy skoru eşik değerini aştı; uzman incelemesine sevk edildi.</li>
+ *   <li>{@code PENDING}        — The application has not been evaluated yet.</li>
+ *   <li>{@code APPROVED}       — Automatically approved by the system (low risk).</li>
+ *   <li>{@code REJECTED}       — Automatically rejected by the system (high risk).</li>
+ *   <li>{@code MANUAL_REVIEW}  — Entropy score exceeded threshold; sent to risk analyst for review.</li>
  * </ul>
  */
 public enum ApplicationStatus {

@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Banka müşterisini temsil eden JPA entity sınıfı.
+ * JPA entity class representing a bank customer.
  *
- * <p>Her müşterinin benzersiz bir T.C. kimlik numarası ({@code identityNumber})
- * vardır ve birden fazla {@link CreditApplication} kaydına sahip olabilir.</p>
+ * <p>Each customer has a unique identity number ({@code identityNumber})
+ * and can have multiple {@link CreditApplication} records.</p>
  *
- * <p>Tablo adı: {@code customers}</p>
+ * <p>Table name: {@code customers}</p>
  */
 @Entity
 @Table(name = "customers", uniqueConstraints = {
@@ -25,61 +25,61 @@ import java.util.List;
 public class Customer {
 
     /**
-     * Birincil anahtar – Otomatik artan (AUTO_INCREMENT).
+     * Primary key – Auto-increment (AUTO_INCREMENT).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     /**
-     * Müşterinin adı ve soyadı.
+     * Customer's full name.
      */
     @Column(nullable = false, length = 100)
     private String name;
 
     /**
-     * T.C. Kimlik Numarası (11 hane, benzersiz).
+     * National Identity Number (11 digits, unique).
      */
     @Column(nullable = false, unique = true, length = 11)
     private String identityNumber;
 
     /**
-     * E-posta adresi.
+     * Email address.
      */
     @Column(nullable = false, length = 150)
     private String email;
 
     /**
-     * Aylık gelir (TL).
+     * Monthly income (TL).
      */
     @Column(nullable = false)
     private Double monthlyIncome;
 
     // ─────────────────────────────────────────────
-    //  İlişki: Bir müşterinin birden fazla kredi başvurusu olabilir
+    //  Relationship: A customer can have multiple credit applications
     // ─────────────────────────────────────────────
 
     /**
-     * Bu müşteriye ait tüm kredi başvuruları.
+     * All credit applications belonging to this customer.
      *
-     * <p>{@code mappedBy = "customer"} → İlişkinin sahibi
-     * {@link CreditApplication#customer} alanıdır.</p>
+     * <p>{@code mappedBy = "customer"} → The owner of the relationship
+     * is the {@link CreditApplication#customer} field.</p>
      *
-     * <p>{@code cascade = ALL} → Müşteri silindiğinde başvuruları da silinir.</p>
+     * <p>{@code cascade = ALL} → If the customer is deleted, their applications are also deleted.</p>
      *
-     * <p>{@code orphanRemoval = true} → Listeden çıkarılan başvuru veritabanından da silinir.</p>
+     * <p>{@code orphanRemoval = true} → If an application is removed from the list, it is also deleted from the database.</p>
      */
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<CreditApplication> creditApplications = new ArrayList<>();
 
     // ─────────────────────────────────────────────
-    //  Yardımcı metotlar (Bidirectional sync)
+    //  Helper methods (Bidirectional sync)
     // ─────────────────────────────────────────────
 
     /**
-     * Müşteriye yeni bir kredi başvurusu ekler ve
-     * başvurunun {@code customer} referansını otomatik olarak ayarlar.
+     * Adds a new credit application to the customer and
+     * automatically sets the {@code customer} reference on the application.
      */
     public void addCreditApplication(CreditApplication application) {
         creditApplications.add(application);
@@ -87,8 +87,8 @@ public class Customer {
     }
 
     /**
-     * Müşteriden bir kredi başvurusunu kaldırır ve
-     * başvurunun {@code customer} referansını null yapar.
+     * Removes a credit application from the customer and
+     * sets the {@code customer} reference on the application to null.
      */
     public void removeCreditApplication(CreditApplication application) {
         creditApplications.remove(application);

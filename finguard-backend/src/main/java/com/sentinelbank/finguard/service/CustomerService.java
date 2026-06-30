@@ -1,5 +1,6 @@
 package com.sentinelbank.finguard.service;
 
+import com.sentinelbank.finguard.exception.CustomerNotFoundException;
 import com.sentinelbank.finguard.model.Customer;
 import com.sentinelbank.finguard.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,10 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * Müşteri iş mantığı katmanı.
+ * Customer business logic service layer.
  *
- * <p>Temel CRUD operasyonlarını ve iş kurallarını
- * (kimlik numarası / e-posta tekil kontrolü vb.) içerir.</p>
+ * <p>Contains basic CRUD operations and business rules (e.g., unique identity check).</p>
  */
 @Service
 @RequiredArgsConstructor
@@ -26,28 +26,25 @@ public class CustomerService {
     // ─────────────────────────────────────────────
 
     /**
-     * Yeni müşteri kaydı oluşturur.
+     * Creates a new customer profile.
      *
-     * <p>Aynı T.C. kimlik numarası veya e-posta adresiyle
-     * daha önce kayıt yapılmışsa {@link IllegalArgumentException} fırlatır.</p>
-     *
-     * @param customer kaydedilecek müşteri nesnesi
-     * @return veritabanına kaydedilmiş müşteri (id atanmış hâli)
-     * @throws IllegalArgumentException kimlik numarası veya e-posta zaten mevcutsa
+     * @param customer Customer entity to be saved
+     * @return Saved customer entity with generated ID
+     * @throws IllegalArgumentException if the national identity or email is already registered
      */
     public Customer createCustomer(Customer customer) {
-        // T.C. kimlik numarası benzersizlik kontrolü
+        // Unique national identity check
         if (customerRepository.existsByIdentityNumber(customer.getIdentityNumber())) {
             throw new IllegalArgumentException(
-                "Bu T.C. Kimlik Numarası ile kayıtlı bir müşteri zaten mevcut: "
+                "Customer with this National Identity Number is already registered: "
                     + customer.getIdentityNumber()
             );
         }
 
-        // E-posta benzersizlik kontrolü
+        // Unique email check
         if (customerRepository.existsByEmail(customer.getEmail())) {
             throw new IllegalArgumentException(
-                "Bu e-posta adresi ile kayıtlı bir müşteri zaten mevcut: "
+                "Customer with this email address is already registered: "
                     + customer.getEmail()
             );
         }
@@ -60,39 +57,39 @@ public class CustomerService {
     // ─────────────────────────────────────────────
 
     /**
-     * ID'ye göre müşteri getirir.
+     * Retrieves a customer by ID.
      *
-     * @param id müşteri ID'si
-     * @return bulunan müşteri
-     * @throws IllegalArgumentException müşteri bulunamazsa
+     * @param id Customer ID
+     * @return Found customer entity
+     * @throws CustomerNotFoundException if the customer does not exist
      */
     @Transactional(readOnly = true)
     public Customer getCustomerById(Long id) {
         return customerRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException(
-                "Müşteri bulunamadı. ID: " + id
+            .orElseThrow(() -> new CustomerNotFoundException(
+                "Customer not found. ID: " + id
             ));
     }
 
     /**
-     * T.C. Kimlik Numarasına göre müşteri getirir.
+     * Retrieves a customer by National Identity Number.
      *
-     * @param identityNumber 11 haneli T.C. kimlik numarası
-     * @return bulunan müşteri
-     * @throws IllegalArgumentException müşteri bulunamazsa
+     * @param identityNumber 11-digit national identity number
+     * @return Found customer entity
+     * @throws CustomerNotFoundException if the customer does not exist
      */
     @Transactional(readOnly = true)
     public Customer getCustomerByIdentityNumber(String identityNumber) {
         return customerRepository.findByIdentityNumber(identityNumber)
-            .orElseThrow(() -> new IllegalArgumentException(
-                "Bu T.C. Kimlik Numarası ile kayıtlı müşteri bulunamadı: " + identityNumber
+            .orElseThrow(() -> new CustomerNotFoundException(
+                "Customer not found with National Identity Number: " + identityNumber
             ));
     }
 
     /**
-     * Tüm müşterileri listeler.
+     * Retrieves all registered customers.
      *
-     * @return müşteri listesi
+     * @return List of all customers
      */
     @Transactional(readOnly = true)
     public List<Customer> getAllCustomers() {
@@ -104,33 +101,31 @@ public class CustomerService {
     // ─────────────────────────────────────────────
 
     /**
-     * Mevcut müşteriyi günceller.
+     * Updates an existing customer profile.
      *
-     * <p>Güncellenecek müşterinin veritabanında mevcut olması gerekir.
-     * Kimlik numarası veya e-posta değiştiriliyorsa tekil kontrolü yapılır.</p>
-     *
-     * @param id              güncellenecek müşterinin ID'si
-     * @param updatedCustomer yeni bilgileri içeren müşteri nesnesi
-     * @return güncellenmiş müşteri
-     * @throws IllegalArgumentException müşteri bulunamazsa veya tekil kısıt ihlali varsa
+     * @param id              Customer ID to be updated
+     * @param updatedCustomer New customer data
+     * @return Updated customer entity
+     * @throws CustomerNotFoundException if the customer does not exist
+     * @throws IllegalArgumentException if the updated identity number or email conflicts with an existing customer
      */
     public Customer updateCustomer(Long id, Customer updatedCustomer) {
         Customer existingCustomer = getCustomerById(id);
 
-        // Kimlik numarası değişiyorsa → benzersizlik kontrolü
+        // Identity number changed -> unique check
         if (!existingCustomer.getIdentityNumber().equals(updatedCustomer.getIdentityNumber())
                 && customerRepository.existsByIdentityNumber(updatedCustomer.getIdentityNumber())) {
             throw new IllegalArgumentException(
-                "Bu T.C. Kimlik Numarası ile kayıtlı başka bir müşteri zaten mevcut: "
+                "Another customer is already registered with this National Identity Number: "
                     + updatedCustomer.getIdentityNumber()
             );
         }
 
-        // E-posta değişiyorsa → benzersizlik kontrolü
+        // Email changed -> unique check
         if (!existingCustomer.getEmail().equals(updatedCustomer.getEmail())
                 && customerRepository.existsByEmail(updatedCustomer.getEmail())) {
             throw new IllegalArgumentException(
-                "Bu e-posta adresi ile kayıtlı başka bir müşteri zaten mevcut: "
+                "Another customer is already registered with this email address: "
                     + updatedCustomer.getEmail()
             );
         }
@@ -148,13 +143,10 @@ public class CustomerService {
     // ─────────────────────────────────────────────
 
     /**
-     * Müşteriyi ve bağlı tüm kredi başvurularını siler.
+     * Deletes a customer and all their associated credit applications.
      *
-     * <p>{@code CascadeType.ALL} ve {@code orphanRemoval = true}
-     * sayesinde ilişkili {@code CreditApplication} kayıtları da otomatik silinir.</p>
-     *
-     * @param id silinecek müşterinin ID'si
-     * @throws IllegalArgumentException müşteri bulunamazsa
+     * @param id Customer ID to be deleted
+     * @throws CustomerNotFoundException if the customer does not exist
      */
     public void deleteCustomer(Long id) {
         Customer customer = getCustomerById(id);

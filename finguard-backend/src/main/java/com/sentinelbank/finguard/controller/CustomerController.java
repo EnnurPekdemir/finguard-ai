@@ -13,100 +13,46 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Müşteri yönetimi REST API controller'ı.
- *
- * <p>Tüm endpoint'ler {@code /api/customers} altında gruplanmıştır.
- * Entity sınıfları doğrudan dışarıya açılmaz — tüm istek ve yanıtlar
- * DTO'lar üzerinden yapılır.</p>
- *
- * <h3>Endpoint Tablosu:</h3>
- * <table>
- *   <tr><td>POST</td><td>/api/customers</td><td>Yeni müşteri oluştur</td></tr>
- *   <tr><td>GET</td><td>/api/customers</td><td>Tüm müşterileri listele</td></tr>
- *   <tr><td>GET</td><td>/api/customers/{id}</td><td>ID ile müşteri getir</td></tr>
- *   <tr><td>PUT</td><td>/api/customers/{id}</td><td>Müşteri güncelle</td></tr>
- *   <tr><td>DELETE</td><td>/api/customers/{id}</td><td>Müşteri sil</td></tr>
- * </table>
+ * REST Controller for managing customer accounts.
  */
 @RestController
 @RequestMapping("/api/customers")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class CustomerController {
 
     private final CustomerService customerService;
 
-    // ─────────────────────────────────────────────
-    //  POST /api/customers — Yeni müşteri oluştur
-    // ─────────────────────────────────────────────
-
     /**
-     * Yeni müşteri kaydı oluşturur.
+     * Creates a new customer profile.
      *
-     * <p><strong>Postman Test:</strong></p>
-     * <pre>
-     * POST http://localhost:8081/api/customers
-     * Content-Type: application/json
-     *
-     * {
-     *   "name": "Ahmet Yılmaz",
-     *   "identityNumber": "12345678901",
-     *   "email": "ahmet.yilmaz@email.com",
-     *   "monthlyIncome": 25000.0
-     * }
-     * </pre>
-     *
-     * @param customerDTO müşteri bilgilerini içeren DTO
-     * @return oluşturulan müşterinin yanıt DTO'su (201 Created)
+     * @param customerDTO DTO containing customer details
+     * @return Response containing the created customer details (201 Created)
      */
     @PostMapping
-    public ResponseEntity<?> createCustomer(@RequestBody CustomerDTO customerDTO) {
-        try {
-            // DTO → Entity dönüşümü
-            Customer customer = Customer.builder()
-                .name(customerDTO.getName())
-                .identityNumber(customerDTO.getIdentityNumber())
-                .email(customerDTO.getEmail())
-                .monthlyIncome(customerDTO.getMonthlyIncome())
-                .build();
+    public ResponseEntity<CustomerResponseDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
+        Customer customer = Customer.builder()
+            .name(customerDTO.getName())
+            .identityNumber(customerDTO.getIdentityNumber())
+            .email(customerDTO.getEmail())
+            .monthlyIncome(customerDTO.getMonthlyIncome())
+            .build();
 
-            Customer savedCustomer = customerService.createCustomer(customer);
-
-            // Entity → Response DTO dönüşümü
-            CustomerResponseDTO responseDTO = toResponseDTO(savedCustomer);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        }
+        Customer savedCustomer = customerService.createCustomer(customer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponseDTO(savedCustomer));
     }
 
-    // ─────────────────────────────────────────────
-    //  GET /api/customers — Tüm müşterileri listele
-    // ─────────────────────────────────────────────
-
     /**
-     * Kayıtlı tüm müşterileri döndürür.
+     * Lists all registered customers.
      *
-     * <p><strong>Postman Test:</strong></p>
-     * <pre>
-     * GET http://localhost:8081/api/customers
-     * </pre>
-     *
-     * @return müşteri listesi (200 OK)
+     * @return List of all customer response DTOs
      */
     @GetMapping
     public ResponseEntity<List<CustomerResponseDTO>> getAllCustomers() {
         List<Customer> customers = customerService.getAllCustomers();
-
         List<CustomerResponseDTO> responseDTOs = customers.stream()
             .map(this::toResponseDTO)
             .collect(Collectors.toList());
@@ -114,136 +60,61 @@ public class CustomerController {
         return ResponseEntity.ok(responseDTOs);
     }
 
-    // ─────────────────────────────────────────────
-    //  GET /api/customers/{id} — ID ile müşteri getir
-    // ─────────────────────────────────────────────
-
     /**
-     * Belirli bir müşteriyi ID ile getirir.
+     * Retrieves a specific customer by ID.
      *
-     * <p><strong>Postman Test:</strong></p>
-     * <pre>
-     * GET http://localhost:8081/api/customers/1
-     * </pre>
-     *
-     * @param id müşteri ID'si
-     * @return müşteri bilgisi (200 OK) veya hata mesajı (404 Not Found)
+     * @param id Customer ID
+     * @return Customer details
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCustomerById(@PathVariable Long id) {
-        try {
-            Customer customer = customerService.getCustomerById(id);
-            CustomerResponseDTO responseDTO = toResponseDTO(customer);
-            return ResponseEntity.ok(responseDTO);
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        }
+    public ResponseEntity<CustomerResponseDTO> getCustomerById(@PathVariable Long id) {
+        Customer customer = customerService.getCustomerById(id);
+        return ResponseEntity.ok(toResponseDTO(customer));
     }
 
-    // ─────────────────────────────────────────────
-    //  PUT /api/customers/{id} — Müşteri güncelle
-    // ─────────────────────────────────────────────
-
     /**
-     * Mevcut müşteriyi günceller.
+     * Updates an existing customer profile.
      *
-     * <p><strong>Postman Test:</strong></p>
-     * <pre>
-     * PUT http://localhost:8081/api/customers/1
-     * Content-Type: application/json
-     *
-     * {
-     *   "name": "Ahmet Yılmaz (Güncel)",
-     *   "identityNumber": "12345678901",
-     *   "email": "ahmet.yilmaz@yenimail.com",
-     *   "monthlyIncome": 30000.0
-     * }
-     * </pre>
-     *
-     * @param id          güncellenecek müşterinin ID'si
-     * @param customerDTO yeni müşteri bilgileri
-     * @return güncellenmiş müşteri (200 OK) veya hata mesajı
+     * @param id          Customer ID to be updated
+     * @param customerDTO Updated customer details
+     * @return Updated customer details
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
-        try {
-            Customer updatedData = Customer.builder()
-                .name(customerDTO.getName())
-                .identityNumber(customerDTO.getIdentityNumber())
-                .email(customerDTO.getEmail())
-                .monthlyIncome(customerDTO.getMonthlyIncome())
-                .build();
+    public ResponseEntity<CustomerResponseDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+        Customer updatedData = Customer.builder()
+            .name(customerDTO.getName())
+            .identityNumber(customerDTO.getIdentityNumber())
+            .email(customerDTO.getEmail())
+            .monthlyIncome(customerDTO.getMonthlyIncome())
+            .build();
 
-            Customer updatedCustomer = customerService.updateCustomer(id, updatedData);
-            CustomerResponseDTO responseDTO = toResponseDTO(updatedCustomer);
-
-            return ResponseEntity.ok(responseDTO);
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        }
+        Customer updatedCustomer = customerService.updateCustomer(id, updatedData);
+        return ResponseEntity.ok(toResponseDTO(updatedCustomer));
     }
 
-    // ─────────────────────────────────────────────
-    //  DELETE /api/customers/{id} — Müşteri sil
-    // ─────────────────────────────────────────────
-
     /**
-     * Müşteriyi ve bağlı tüm kredi başvurularını siler.
+     * Deletes a customer and all their credit applications.
      *
-     * <p><strong>Postman Test:</strong></p>
-     * <pre>
-     * DELETE http://localhost:8081/api/customers/1
-     * </pre>
-     *
-     * @param id silinecek müşterinin ID'si
-     * @return 204 No Content veya hata mesajı (404 Not Found)
+     * @param id Customer ID to be deleted
+     * @return 204 No Content
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCustomer(@PathVariable Long id) {
-        try {
-            customerService.deleteCustomer(id);
-            return ResponseEntity.noContent().build();
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of(
-                    "error", true,
-                    "message", e.getMessage()
-                ));
-        }
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
     }
 
-    // ─────────────────────────────────────────────
-    //  Entity → DTO Dönüşüm Yardımcısı
-    // ─────────────────────────────────────────────
-
     /**
-     * {@link Customer} entity'sini {@link CustomerResponseDTO}'ya dönüştürür.
-     *
-     * <p>İlişkili kredi başvuruları da {@link CreditApplicationResponseDTO}
-     * listesine çevrilir. Böylece Jackson sonsuz döngü sorunu (infinite recursion)
-     * oluşmaz.</p>
+     * Maps Customer entity to CustomerResponseDTO.
      */
     private CustomerResponseDTO toResponseDTO(Customer customer) {
         List<CreditApplicationResponseDTO> applicationDTOs;
 
-        // Lazy-loaded koleksiyonu güvenli şekilde dönüştür
         try {
             applicationDTOs = customer.getCreditApplications().stream()
                 .map(this::toApplicationResponseDTO)
                 .collect(Collectors.toList());
         } catch (Exception e) {
-            // Lazy initialization hatası durumunda boş liste döndür
             applicationDTOs = Collections.emptyList();
         }
 
@@ -258,7 +129,7 @@ public class CustomerController {
     }
 
     /**
-     * {@link CreditApplication} entity'sini {@link CreditApplicationResponseDTO}'ya dönüştürür.
+     * Maps CreditApplication entity to CreditApplicationResponseDTO.
      */
     private CreditApplicationResponseDTO toApplicationResponseDTO(CreditApplication application) {
         return CreditApplicationResponseDTO.builder()
